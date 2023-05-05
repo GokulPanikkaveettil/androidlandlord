@@ -15,7 +15,6 @@ class Database {
     }
 
     private fun connect() {
-        println("hello.....")
         val thread = Thread {
             try {
                 Class.forName("org.postgresql.Driver")

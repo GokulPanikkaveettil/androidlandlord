@@ -4,9 +4,9 @@ import java.sql.DriverManager
 
 class Database {
     private var connection: Connection? = null
-    private val user = "zjcjmmse"
-    private val pass = ""
-    private var url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
+    private val user = "voyageradmin"
+    private val pass = "voyageradmin"
+    private var url = "jdbc:postgresql://10.0.2.2:5432/voyager_db"
     private var status = false
 
     init {

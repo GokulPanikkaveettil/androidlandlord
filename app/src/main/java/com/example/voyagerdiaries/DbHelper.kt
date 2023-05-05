@@ -1,10 +1,11 @@
+import android.widget.Toast
 import java.sql.Connection
 import java.sql.DriverManager
 
 class Database {
     private var connection: Connection? = null
     private val user = "zjcjmmse"
-    private val pass = "gp_LDmHthXvylqUAbb2S2okzyHYDLZj-"
+    private val pass = ""
     private var url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
     private var status = false
 

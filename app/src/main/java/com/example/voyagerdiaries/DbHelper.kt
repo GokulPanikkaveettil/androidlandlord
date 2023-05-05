@@ -64,4 +64,24 @@ class Database {
         }
     }
 
+    fun addNewUser(firstName: String, lastName: String, userName: String, password: String): Boolean {
+        val thread = Thread {
+            val query = "INSERT INTO users (first_name, last_name, username, password) values ('$firstName', '$lastName', '$userName', '$password')"
+            try {
+                val statement = connection?.createStatement();
+                val resultSet = statement?.executeQuery(query);
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            status = false
+        }
+        return true
+    }
+
 }

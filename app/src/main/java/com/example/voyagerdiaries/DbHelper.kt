@@ -1,6 +1,8 @@
 import android.widget.Toast
+import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.ResultSet
 
 class Database {
     private var connection: Connection? = null
@@ -39,7 +41,8 @@ class Database {
 
     fun addNewUser(firstName: String, lastName: String, userName: String, password: String): Boolean {
         val thread = Thread {
-            val query = "INSERT INTO users (first_name, last_name, username, password) values ('$firstName', '$lastName', '$userName', '$password')"
+            val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray()).joinToString("") { "%02x".format(it) }
+            val query = "INSERT INTO users (first_name, last_name, username, password) values ('$firstName', '$lastName', '$userName', '$encryptedPassword')"
             try {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
@@ -55,6 +58,34 @@ class Database {
             status = false
         }
         return true
+    }
+
+
+    fun authenticateUser(userName: String, password: String): Boolean{
+        var authenticationSuccess = false;
+        val thread = Thread {
+            val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray()).joinToString("") { "%02x".format(it) }
+            val query = "select * from  users where username='$userName' and password='$encryptedPassword'"
+
+            try {
+                val statement = connection?.createStatement();
+                val resultSet = statement?.executeQuery(query);
+                if(resultSet?.next() == true){
+                    authenticationSuccess = true
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            status = false
+        }
+        return authenticationSuccess
     }
 
 }

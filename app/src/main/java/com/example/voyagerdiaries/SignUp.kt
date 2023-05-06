@@ -29,6 +29,8 @@ class SignUp : AppCompatActivity() {
                 userName.text.toString(), password.text.toString())
             if (userAdded == true){
                 Toast.makeText(this, "User Created successfully.", Toast.LENGTH_SHORT).show()
+                val mainActivityIntent = Intent(this, MainActivity::class.java)
+                startActivity(mainActivityIntent)
             }
         }
     }

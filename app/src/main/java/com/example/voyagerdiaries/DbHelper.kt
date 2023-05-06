@@ -1,13 +1,15 @@
+import android.content.Context
 import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
 
-class Database {
+class Database (context: Context){
     private var connection: Connection? = null
     private val user = "voyageradmin"
     private val pass = "voyageradmin"
     private var url = "jdbc:postgresql://10.0.2.2:5432/voyager_db"
     private var status = false
+    private var context: Context = context
 
     init {
         connect()
@@ -41,7 +43,7 @@ class Database {
         var userAdded = false;
         val thread = Thread {
             val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray()).joinToString("") { "%02x".format(it) }
-            val query = "INSERT INTO users (first_name, last_name, username, password) values ('$firstName', '$lastName', '$userName', '$encryptedPassword')"
+            val query = "INSERT INTO users (first_name, last_name, username, password) values ('$firstName', '$lastName', '$userName', '$encryptedPassword') returning id"
             try {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
@@ -72,7 +74,19 @@ class Database {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
                 if(resultSet?.next() == true){
+                    println(">>>>>>>>>>>>>>>")
+                    println(query)
                     authenticationSuccess = true
+                    val id = resultSet.getInt("id")
+                    val firstName = resultSet.getString("first_name")
+                    val lastName = resultSet.getString("last_name")
+                    val username = resultSet.getString("username")
+                    val voyagerdiariesPref = context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+                    val editor = voyagerdiariesPref.edit()
+                    editor.putString("id", id.toString())
+                    editor.putString("firstName", firstName)
+                    editor.putString("username", username)
+                    editor.putString("lastName", lastName)
                 }
 
             } catch (e: Exception) {
@@ -86,6 +100,7 @@ class Database {
             e.printStackTrace()
             status = false
         }
+        println(authenticationSuccess)
         return authenticationSuccess
     }
 

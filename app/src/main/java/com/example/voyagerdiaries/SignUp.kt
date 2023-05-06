@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.sql.DriverManager
 
 class SignUp : AppCompatActivity() {
     private val user = "voyageradmin"
@@ -24,17 +23,30 @@ class SignUp : AppCompatActivity() {
         val userName = findViewById<EditText>(R.id.editTextUsername);
         val password = findViewById<EditText>(R.id.editTextPassword);
         button.setOnClickListener {
-            val db = Database()
-            val userAdded = db.addNewUser(firstName.text.toString(), lastName.text.toString(),
-                userName.text.toString(), password.text.toString())
-            if (userAdded == true){
-                Toast.makeText(this, "User Created successfully.", Toast.LENGTH_SHORT).show()
-                val mainActivityIntent = Intent(this, MainActivity::class.java)
-                startActivity(mainActivityIntent)
+            val formValid = validateInput(firstName.text.toString(), lastName.text.toString(), userName.text.toString(), password.text.toString())
+            if(formValid) {
+                val db = Database(this)
+                val userAdded = db.addNewUser(
+                    firstName.text.toString(), lastName.text.toString(),
+                    userName.text.toString(), password.text.toString()
+                )
+                if (userAdded == true) {
+                    Toast.makeText(this, "User Created successfully.", Toast.LENGTH_SHORT).show()
+                    val mainActivityIntent = Intent(this, MainActivity::class.java)
+                    startActivity(mainActivityIntent)
+                } else {
+                    Toast.makeText(this, "Unable to create account..", Toast.LENGTH_SHORT).show()
+                }
             }
             else {
-                Toast.makeText(this, "Unable to create account..", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Validation errors", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    fun validateInput(firstName: String, lastName: String, userName: String, password: String): Boolean{
+        if(firstName.length <= 0){
+            return false
+        }
+        return true
     }
 }

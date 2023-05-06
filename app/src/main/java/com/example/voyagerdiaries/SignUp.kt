@@ -32,6 +32,9 @@ class SignUp : AppCompatActivity() {
                 val mainActivityIntent = Intent(this, MainActivity::class.java)
                 startActivity(mainActivityIntent)
             }
+            else {
+                Toast.makeText(this, "Unable to create account..", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

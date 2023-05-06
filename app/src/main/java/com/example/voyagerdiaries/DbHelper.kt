@@ -1,8 +1,6 @@
-import android.widget.Toast
 import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.ResultSet
 
 class Database {
     private var connection: Connection? = null
@@ -40,13 +38,16 @@ class Database {
     }
 
     fun addNewUser(firstName: String, lastName: String, userName: String, password: String): Boolean {
+        var userAdded = false;
         val thread = Thread {
             val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray()).joinToString("") { "%02x".format(it) }
             val query = "INSERT INTO users (first_name, last_name, username, password) values ('$firstName', '$lastName', '$userName', '$encryptedPassword')"
             try {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
+                userAdded = true;
             } catch (e: Exception) {
+                userAdded = false;
                 e.printStackTrace()
             }
         }
@@ -57,7 +58,7 @@ class Database {
             e.printStackTrace()
             status = false
         }
-        return true
+        return userAdded
     }
 
 

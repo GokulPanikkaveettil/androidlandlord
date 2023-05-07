@@ -20,10 +20,8 @@ class Database (context: Context){
         val thread = Thread {
             try {
                 Class.forName("org.postgresql.Driver")
-                println(url)
                 connection = DriverManager.getConnection(url, user, pass)
                 status = true
-                println("connected:$status")
             } catch (e: Exception) {
                 status = false
                 print(e.message)
@@ -74,8 +72,6 @@ class Database (context: Context){
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
                 if(resultSet?.next() == true){
-                    println(">>>>>>>>>>>>>>>")
-                    println(query)
                     authenticationSuccess = true
                     val id = resultSet.getInt("id")
                     val firstName = resultSet.getString("first_name")
@@ -100,7 +96,6 @@ class Database (context: Context){
             e.printStackTrace()
             status = false
         }
-        println(authenticationSuccess)
         return authenticationSuccess
     }
 

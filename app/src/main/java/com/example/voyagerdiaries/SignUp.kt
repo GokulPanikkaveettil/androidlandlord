@@ -38,13 +38,19 @@ class SignUp : AppCompatActivity() {
                     Toast.makeText(this, "Unable to create account..", Toast.LENGTH_SHORT).show()
                 }
             }
-            else {
-                Toast.makeText(this, "Validation errors", Toast.LENGTH_SHORT).show()
-            }
         }
     }
     fun validateInput(firstName: String, lastName: String, userName: String, password: String): Boolean{
         if(firstName.length <= 0){
+            Toast.makeText(this, "First Name cannot be empty", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if(userName.length <= 0){
+            Toast.makeText(this, "User Name cannot be empty", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if(password.length <= 0){
+            Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show()
             return false
         }
         return true

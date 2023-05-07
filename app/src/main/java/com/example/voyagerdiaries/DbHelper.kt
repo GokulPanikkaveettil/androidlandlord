@@ -83,7 +83,7 @@ class Database (context: Context){
                     val editor = voyagerdiariesPref.edit()
                     editor.putString("id", id.toString())
                     editor.putString("firstName", firstName)
-                    editor.putString("username", username)
+                    editor.putString("userName", username)
                     editor.putString("lastName", lastName)
                     editor.apply()
                 }
@@ -114,6 +114,33 @@ class Database (context: Context){
                 e.printStackTrace()
             }
         }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun updateProfile(firstName: String, lastName: String){
+        val thread = Thread {
+            val voyagerdiariesPref = context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+            val userId = voyagerdiariesPref.getString("id", null);
+            val query = "update users set first_name='$firstName', last_name='$lastName' where id=$userId returning id";
+            try {
+                val statement = connection?.createStatement();
+                val resultSet = statement?.executeQuery(query);
+                if(resultSet?.next() == true){
+                    val editor = voyagerdiariesPref.edit();
+                    editor.putString("firstName", firstName);
+                    editor.putString("lastName", lastName);
+                    editor.apply()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         thread.start()
         try {
             thread.join()

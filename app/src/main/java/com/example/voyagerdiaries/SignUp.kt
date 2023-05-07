@@ -27,8 +27,8 @@ class SignUp : AppCompatActivity() {
             if(formValid) {
                 val db = Database(this)
                 val userAdded = db.addNewUser(
-                    firstName.text.toString(), lastName.text.toString(),
-                    userName.text.toString(), password.text.toString()
+                    firstName.text.toString().trim(), lastName.text.toString().trim(),
+                    userName.text.toString().trim(), password.text.toString().trim()
                 )
                 if (userAdded == true) {
                     Toast.makeText(this, "User Created successfully.", Toast.LENGTH_SHORT).show()

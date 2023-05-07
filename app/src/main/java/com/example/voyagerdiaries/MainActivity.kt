@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
             val userName = findViewById<EditText>(R.id.editTextUsernameLogin);
             val password = findViewById<EditText>(R.id.editTextPasswordLogin);
             val db = Database(this)
-            val checkAuthentication = db.authenticateUser(userName.text.toString(), password.text.toString())
+            val checkAuthentication = db.authenticateUser(userName.text.toString().trim(), password.text.toString().trim())
             if(checkAuthentication) {
                 startActivity(intent)
                 Toast.makeText(this, "Authentication successful....", Toast.LENGTH_SHORT).show()

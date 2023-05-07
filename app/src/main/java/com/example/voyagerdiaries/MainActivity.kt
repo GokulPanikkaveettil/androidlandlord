@@ -1,13 +1,14 @@
 package com.example.voyagerdiaries
 
 import Database
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +17,22 @@ class MainActivity : AppCompatActivity() {
         val button = findViewById<Button>(R.id.button3);
         val login = findViewById<Button>(R.id.button2);
         val viewReviews = findViewById<Button>(R.id.viewReviews);
+        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+        nav.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.navbar_profile -> {
+                    val updateProfile = Intent(this, ProfileUpdate::class.java)
+                    startActivity(updateProfile)
+                }
+
+                R.id.navbar_home -> {
+                    val mainIntent = Intent(this, MainActivity::class.java)
+                    startActivity(mainIntent)
+                }
+            }
+            true
+        }
         button.setOnClickListener {
             val intent = Intent(this, SignUp::class.java)
             startActivity(intent)

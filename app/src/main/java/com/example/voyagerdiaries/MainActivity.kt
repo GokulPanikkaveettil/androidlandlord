@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         login.setOnClickListener {
-            val intent = Intent(this, ProfileUpdate::class.java)
+            val intent = Intent(this, CreateReviews::class.java)
             val userName = findViewById<EditText>(R.id.editTextUsernameLogin);
             val password = findViewById<EditText>(R.id.editTextPasswordLogin);
             val db = Database(this)

@@ -1,6 +1,5 @@
 import android.content.Context
-import android.content.SharedPreferences
-import android.widget.Toast
+import com.example.voyagerdiaries.Review
 import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
@@ -147,6 +146,33 @@ class Database (context: Context){
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun getAllReview(): MutableList<Review>{
+        val reviewList = mutableListOf<Review>();
+        val thread = Thread {
+
+        val query = "select a.review,b.username from reviews a join users b on a.user_id=b.id;";
+            try {
+                val statement = connection?.createStatement();
+                val resultSet = statement?.executeQuery(query);
+                while (resultSet?.next() == true) {
+                    reviewList.add(Review(resultSet.getString("review"), resultSet.getString("username")))
+                }
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return reviewList
     }
 
 }

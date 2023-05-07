@@ -2,6 +2,7 @@ package com.example.voyagerdiaries
 
 import Database
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -25,6 +26,8 @@ class CreateReviews: AppCompatActivity() {
                 val db = Database(this);
                 db.postUserReviews(reviewText.text.toString());
                 reviewText.setText("")
+                val intent = Intent(this, Reviews::class.java)
+                startActivity(intent)
 
             }
         }

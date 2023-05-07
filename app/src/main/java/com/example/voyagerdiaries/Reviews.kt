@@ -1,5 +1,6 @@
 package com.example.voyagerdiaries
 
+import Database
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,13 +37,12 @@ class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<Revi
 
 
 class Reviews : AppCompatActivity() {
-    val reviewList = mutableListOf<Review>();
+    var reviewList = mutableListOf<Review>();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reviews)
-        reviewList.add(Review("Good Job", "Sagheer"));
-        reviewList.add(Review("Nice Job", "Adam"));
-        reviewList.add(Review("Recommended", "bob"));
+        val db = Database(this);
+        reviewList = db.getAllReview();
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)

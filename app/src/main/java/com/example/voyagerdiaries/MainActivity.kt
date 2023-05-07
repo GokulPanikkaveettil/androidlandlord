@@ -15,8 +15,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val button = findViewById<Button>(R.id.button3);
         val login = findViewById<Button>(R.id.button2);
+        val viewReviews = findViewById<Button>(R.id.viewReviews);
         button.setOnClickListener {
             val intent = Intent(this, SignUp::class.java)
+            startActivity(intent)
+        }
+
+        viewReviews.setOnClickListener {
+            val intent = Intent(this, Reviews::class.java)
             startActivity(intent)
         }
 

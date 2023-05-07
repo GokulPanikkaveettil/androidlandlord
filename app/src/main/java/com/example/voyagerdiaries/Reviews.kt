@@ -11,37 +11,41 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val textView: TextView = itemView as TextView
+data class Review(val review: String, val fullName: String)
 
-    fun bind(text: String) {
-        textView.text = text
-    }
+class ReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val reviewText: TextView = itemView.findViewById(R.id.reviewText);
+    val userName: TextView = itemView.findViewById(R.id.reviewedUser);
 }
 
-class ItemAdapter(private val itemList: List<String>) : RecyclerView.Adapter<ItemViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
-        return ItemViewHolder(view)
+class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<ReviewViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_layout, parent, false)
+        return ReviewViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(itemList[position])
+    override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
+        val review = reviews[position]
+        holder.reviewText.text = review.review
+        holder.userName.text = review.fullName
     }
 
-    override fun getItemCount(): Int = itemList.size
+    override fun getItemCount(): Int = reviews.size
 }
 
 
 class Reviews : AppCompatActivity() {
-    private val itemList = listOf("Item 1", "Item 2")
-
+    val reviewList = mutableListOf<Review>();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reviews)
+        reviewList.add(Review("Good Job", "Sagheer"));
+        reviewList.add(Review("Nice Job", "Adam"));
+        reviewList.add(Review("Recommended", "bob"));
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ItemAdapter(itemList)
+        recyclerView.adapter = ItemAdapter(reviewList)
     }
 }

@@ -1,7 +1,10 @@
 import android.content.Context
+import android.content.SharedPreferences
+import android.widget.Toast
 import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
+
 
 class Database (context: Context){
     private var connection: Connection? = null
@@ -56,7 +59,6 @@ class Database (context: Context){
             thread.join()
         } catch (e: Exception) {
             e.printStackTrace()
-            status = false
         }
         return userAdded
     }
@@ -83,6 +85,7 @@ class Database (context: Context){
                     editor.putString("firstName", firstName)
                     editor.putString("username", username)
                     editor.putString("lastName", lastName)
+                    editor.apply()
                 }
 
             } catch (e: Exception) {
@@ -94,9 +97,29 @@ class Database (context: Context){
             thread.join()
         } catch (e: Exception) {
             e.printStackTrace()
-            status = false
         }
         return authenticationSuccess
+    }
+
+
+    fun postUserReviews(reviews: String){
+        val thread = Thread {
+            val voyagerdiariesPref = context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+            val userId = voyagerdiariesPref.getString("id", null);
+            val query = "insert into reviews (review, user_id) values ('$reviews','$userId') returning id";
+            try {
+                val statement = connection?.createStatement();
+                val resultSet = statement?.executeQuery(query);
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 }

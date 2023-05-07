@@ -29,6 +29,9 @@
         <activity
             android:name=".Reviews"
             android:label="Reviews" />
+        <activity
+            android:name=".CreateReviews"
+            android:label="Post Reviews" />
     </application>
 
 </manifest>

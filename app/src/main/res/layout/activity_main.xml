@@ -51,7 +51,7 @@
         app:layout_constraintVertical_bias="0.377" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2d7ce6"
@@ -64,7 +64,7 @@
         app:layout_constraintVertical_bias="0.535" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2d7ce6"
@@ -75,20 +75,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.639" />
-
-    <Button
-        android:id="@+id/viewReviews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#2d7ce6"
-        android:text="Reviews"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.812" />
-
-    <include layout="@layout/bottom_navigation" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

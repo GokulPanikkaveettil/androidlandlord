@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 data class Review(val review: String, val fullName: String)
 
@@ -43,6 +44,8 @@ class Reviews : AppCompatActivity() {
         setContentView(R.layout.reviews)
         val db = Database(this);
         reviewList = db.getAllReview();
+        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView);
+        navbarActions(this, nav);
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)

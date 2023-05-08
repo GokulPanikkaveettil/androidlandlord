@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class CreateReviews: AppCompatActivity() {
 
@@ -18,6 +19,10 @@ class CreateReviews: AppCompatActivity() {
 
         val reviewText = findViewById<EditText>(R.id.editTextPostReviews);
         val postReviewButton = findViewById<Button>(R.id.postReview);
+        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        navbarActions(this, nav);
+        val selectedItem = nav.menu.findItem(R.id.add_review)
+        selectedItem?.setChecked(true)
         postReviewButton.setOnClickListener {
             if (reviewText.text.isBlank() == true) {
                 Toast.makeText(this, "We appreciate your feedback, but we cannot accept empty reviews.", Toast.LENGTH_SHORT).show()

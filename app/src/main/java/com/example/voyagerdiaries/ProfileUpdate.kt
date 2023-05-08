@@ -17,33 +17,25 @@ class ProfileUpdate : AppCompatActivity() {
         val updateFirstName = findViewById<EditText>(R.id.editTextUpdateFirstName);
         val updateLastName = findViewById<EditText>(R.id.editTextUpdateLastName);
         val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-
-        nav.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.navbar_profile -> {
-                    val updateProfile = Intent(this, ProfileUpdate::class.java)
-                    startActivity(updateProfile)
-                }
-
-                R.id.navbar_home -> {
-                    val mainIntent = Intent(this, Reviews::class.java)
-                    startActivity(mainIntent)
-                }
-            }
-            true
-        }
+        val selectedItem = nav.menu.findItem(R.id.navbar_profile)
+        selectedItem?.setChecked(true)
+        navbarActions(this, nav);
 
         val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-
+        val userId = voyagerdiariesPref.getString("id", null);
+        if (userId == null){
+            val intentMainActivity = Intent(this, MainActivity::class.java)
+            startActivity(intentMainActivity)
+        }
         val firstName = voyagerdiariesPref.getString("firstName", null);
         val lastName = voyagerdiariesPref.getString("lastName", null);
         updateFirstName.setText(firstName);
         updateLastName.setText(lastName);
-         val updateButton = findViewById<Button>(R.id.updateProfileButton);
+        val updateButton = findViewById<Button>(R.id.updateProfileButton);
         updateButton.setOnClickListener {
             val db = Database(this);
             db.updateProfile(updateFirstName.text.toString(), updateLastName.text.toString());
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, Reviews::class.java)
             startActivity(intent)
         }
 

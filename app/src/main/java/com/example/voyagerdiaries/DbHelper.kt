@@ -148,18 +148,20 @@ class Database (context: Context){
         }
     }
 
-    fun getAllReview(): MutableList<Review>{
+    fun getAllReview(userId: String? = null): MutableList<Review>{
         val reviewList = mutableListOf<Review>();
         val thread = Thread {
-            val query = "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id order by a.id desc;";
+            var query = "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id order by a.id desc;";
+            if (userId!!.isNotEmpty()){
+                query = "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id ORDER BY r.id DESC; "
+            }
+            println(query)
             try {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
                 while (resultSet?.next() == true) {
-                    reviewList.add(Review(resultSet.getString("review"), resultSet.getString("username"), resultSet.getInt("id")))
+                    reviewList.add(Review(resultSet.getString("review"), resultSet.getString("username"), resultSet.getInt("id"), resultSet.getInt("liked")))
                 }
-
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }

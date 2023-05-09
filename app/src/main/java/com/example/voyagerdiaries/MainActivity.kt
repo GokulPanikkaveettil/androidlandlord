@@ -1,6 +1,7 @@
 package com.example.voyagerdiaries
 
 import Database
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -12,6 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+        val userId = voyagerdiariesPref.getString("id", null);
+        if (userId!!.isNotBlank()){
+            val intentMainActivity = Intent(this, Reviews::class.java)
+            startActivity(intentMainActivity)
+        }
         setContentView(R.layout.activity_main)
         val buttonSignup = findViewById<Button>(R.id.signup);
         val buttonLogin = findViewById<Button>(R.id.login);

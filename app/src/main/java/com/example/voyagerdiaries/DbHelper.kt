@@ -174,4 +174,27 @@ class Database (context: Context){
         return reviewList
     }
 
+    fun likeReview(userId: String, reviewId: Int): Boolean{
+        var likedReview = false;
+        val thread = Thread {
+            try {
+                val query =
+                    "insert into liked_reviews (user_id,review_id) values ($userId,$reviewId) returning id"
+                val statement = connection?.createStatement();
+                val resultSet = statement?.executeQuery(query);
+                likedReview = true;
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return likedReview
+    }
+
 }

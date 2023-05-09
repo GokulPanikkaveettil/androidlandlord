@@ -1,6 +1,7 @@
 package com.example.voyagerdiaries
 
 import Database
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -66,7 +67,7 @@ class Reviews : AppCompatActivity() {
         reviewList = db.getAllReview();
         val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView);
         navbarActions(this, nav);
-
+        val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         val itemAdapter = ItemAdapter(reviewList)
@@ -76,7 +77,14 @@ class Reviews : AppCompatActivity() {
                 val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                 val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
                 likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
-
+                val userId = voyagerdiariesPref.getString("id", null);
+                var liked = db.likeReview(userId!!, reviewId)
+                if(liked){
+                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
+                }
+                else{
+                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24);
+                }
                 Toast.makeText(this@Reviews, "you clicked review $reviewId",Toast.LENGTH_SHORT).show()
             }
         })

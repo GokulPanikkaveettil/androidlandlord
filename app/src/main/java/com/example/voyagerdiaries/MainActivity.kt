@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
-        if (userId!!.isNotBlank()){
+        if (userId != null){
             val intentMainActivity = Intent(this, Reviews::class.java)
             startActivity(intentMainActivity)
         }

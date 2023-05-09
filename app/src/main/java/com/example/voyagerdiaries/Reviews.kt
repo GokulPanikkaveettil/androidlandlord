@@ -1,11 +1,13 @@
 package com.example.voyagerdiaries
 
 import Database
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +22,7 @@ class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener
     val reviewText: TextView = itemView.findViewById(R.id.reviewText);
     val userName: TextView = itemView.findViewById(R.id.reviewedUser);
     var reviewId: Int = 0;
-    val likeButton: Button = itemView.findViewById(R.id.likeButton);
+    val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
 
     init {
         likeButton.setOnClickListener{
@@ -72,8 +74,9 @@ class Reviews : AppCompatActivity() {
         itemAdapter.setOnItemClickListener(object: ItemAdapter.onItemClickListener{
             override fun onItemClick(position: Int, reviewId: Int) {
                 val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                val likedbutton = likebuttonHolder?.itemView?.findViewById<Button>(R.id.likeButton);
-                likedbutton?.setText("Liked");
+                val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
+                likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
+
                 Toast.makeText(this@Reviews, "you clicked review $reviewId",Toast.LENGTH_SHORT).show()
             }
         })

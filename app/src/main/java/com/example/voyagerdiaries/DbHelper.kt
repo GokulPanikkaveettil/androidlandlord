@@ -151,12 +151,12 @@ class Database (context: Context){
     fun getAllReview(): MutableList<Review>{
         val reviewList = mutableListOf<Review>();
         val thread = Thread {
-            val query = "select a.review,b.username from reviews a join users b on a.user_id=b.id order by a.id desc;";
+            val query = "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id order by a.id desc;";
             try {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
                 while (resultSet?.next() == true) {
-                    reviewList.add(Review(resultSet.getString("review"), resultSet.getString("username")))
+                    reviewList.add(Review(resultSet.getString("review"), resultSet.getString("username"), resultSet.getInt("id")))
                 }
 
 

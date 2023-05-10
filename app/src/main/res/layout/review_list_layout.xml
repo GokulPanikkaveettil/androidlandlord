@@ -23,11 +23,7 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/baseline_thumb_up_off_alt_24" />
 
-<!--    <Button-->
-<!--        android:id="@+id/likeButton"-->
-<!--        android:layout_width="76dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Like" />-->
+
 
 </LinearLayout>
 

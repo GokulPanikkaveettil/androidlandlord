@@ -2,12 +2,10 @@ package com.example.voyagerdiaries
 
 import Database
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -36,7 +34,7 @@ class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<Revi
     private lateinit var mListener : onItemClickListener
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_layout, parent, false)
+            .inflate(R.layout.review_list_layout, parent, false)
         return ReviewViewHolder(itemView, mListener)
     }
     interface onItemClickListener {

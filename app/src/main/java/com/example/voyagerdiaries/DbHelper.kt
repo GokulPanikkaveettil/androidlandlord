@@ -1,5 +1,6 @@
 import android.content.Context
 import com.example.voyagerdiaries.Review
+import org.postgresql.util.PSQLException
 import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
@@ -179,13 +180,21 @@ class Database (context: Context){
     fun likeReview(userId: String, reviewId: Int): Boolean{
         var likedReview = false;
         val thread = Thread {
+            val statement = connection?.createStatement();
             try {
                 val query =
                     "insert into liked_reviews (user_id,review_id) values ($userId,$reviewId) returning id"
-                val statement = connection?.createStatement();
+
                 val resultSet = statement?.executeQuery(query);
                 likedReview = true;
-            } catch (e: Exception) {
+            } catch (e: PSQLException){
+                if(e.message.toString().contains("duplicate key value violates unique constraint")){
+                    val deleteQuery = "delete from liked_reviews where user_id=$userId and review_id=$reviewId returning id"
+                    statement?.executeQuery(deleteQuery)
+                }
+            }
+
+            catch (e: Exception) {
                 e.printStackTrace()
             }
         }

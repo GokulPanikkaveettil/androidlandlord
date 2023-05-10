@@ -9,7 +9,7 @@ fun navbarActions(context: Context, nav: BottomNavigationView){
     nav.setOnItemSelectedListener {
         when(it.itemId){
             R.id.navbar_profile -> {
-                val updateProfile = Intent(context, ProfileUpdate::class.java)
+                val updateProfile = Intent(context, Profile::class.java)
                 context.startActivity(updateProfile)
             }
 

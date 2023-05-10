@@ -8,4 +8,26 @@
 
     <include layout="@layout/bottom_navigation" />
 
+    <ImageButton
+        android:id="@+id/profileUpdateView"
+        android:layout_width="158dp"
+        android:layout_height="155dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="119dp"
+        android:contentDescription="Profile Update"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_person_24" />
+
+    <ImageButton
+        android:id="@+id/myReviewsList"
+        android:layout_width="158dp"
+        android:layout_height="155dp"
+        android:layout_marginTop="119dp"
+        android:layout_marginEnd="21dp"
+        android:contentDescription="My Reviews"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_post_add_24" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

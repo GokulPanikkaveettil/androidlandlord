@@ -149,12 +149,15 @@ class Database (context: Context){
         }
     }
 
-    fun getAllReview(userId: String? = null): MutableList<Review>{
+    fun getAllReview(userId: String? = null, usersReview: Boolean = false): MutableList<Review>{
         val reviewList = mutableListOf<Review>();
         val thread = Thread {
             var query = "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id order by a.id desc;";
             if (userId!!.isNotEmpty()){
                 query = "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id ORDER BY r.id DESC; "
+                if(usersReview){
+                    query = query.replace("ORDER BY", "WHERE r.user_id=$userId ORDER BY")
+                }
             }
             println(query)
             try {

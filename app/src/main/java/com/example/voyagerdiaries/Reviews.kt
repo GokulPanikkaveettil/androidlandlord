@@ -71,7 +71,7 @@ class Reviews : AppCompatActivity() {
         val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView);
         navbarActions(this, nav);
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val recyclerView = findViewById<RecyclerView>(R.id.allReviews)
         recyclerView.layoutManager = LinearLayoutManager(this)
         val itemAdapter = ItemAdapter(reviewList)
         recyclerView.adapter = itemAdapter

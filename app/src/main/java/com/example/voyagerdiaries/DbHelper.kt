@@ -211,4 +211,28 @@ class Database (context: Context){
         return likedReview
     }
 
+    fun deleteReview(id: Int): Boolean{
+        var deletedReview = false;
+        val thread = Thread {
+            val statement = connection?.createStatement();
+            try {
+                val query = "delete from reviews where id=$id returning id"
+                val resultSet = statement?.executeQuery(query);
+                deletedReview = true;
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }
+
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return deletedReview
+    }
+
 }

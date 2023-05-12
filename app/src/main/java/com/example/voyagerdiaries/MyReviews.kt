@@ -80,7 +80,8 @@ class MyReviews : AppCompatActivity() {
                 if (action == "liked") {
                     val likedbutton =
                         buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
-                    val liked = db.likeReview(userId!!, reviewId)
+                    val db2 = Database(this@MyReviews)
+                    val liked = db2.likeReview(userId!!, reviewId)
                     if (liked) {
                         likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
                     } else {
@@ -88,7 +89,8 @@ class MyReviews : AppCompatActivity() {
                     }
                 }
                 else if (action == "delete"){
-                    val delete = db.deleteReview(reviewId)
+                    val db2 = Database(this@MyReviews)
+                    val delete = db2.deleteReview(reviewId)
                     if (delete) {
                         reviewList.removeAt(position)
                             println(reviewList)

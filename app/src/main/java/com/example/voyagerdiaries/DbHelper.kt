@@ -21,6 +21,7 @@ class Database (context: Context){
 
     private fun connect() {
         val thread = Thread {
+            println(":::>>>>>>>>>")
             try {
                 Class.forName("org.postgresql.Driver")
                 connection = DriverManager.getConnection(url, user, pass)
@@ -49,6 +50,7 @@ class Database (context: Context){
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
                 userAdded = true;
+                connection?.close()
             } catch (e: Exception) {
                 userAdded = false;
                 e.printStackTrace()
@@ -86,6 +88,7 @@ class Database (context: Context){
                     editor.putString("userName", username)
                     editor.putString("lastName", lastName)
                     editor.apply()
+                    connection?.close()
                 }
 
             } catch (e: Exception) {
@@ -110,6 +113,7 @@ class Database (context: Context){
             try {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);
+                connection?.close()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -136,6 +140,7 @@ class Database (context: Context){
                     editor.putString("lastName", lastName);
                     editor.apply()
                 }
+                connection?.close()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -166,6 +171,7 @@ class Database (context: Context){
                 while (resultSet?.next() == true) {
                     reviewList.add(Review(resultSet.getString("review"), resultSet.getString("username"), resultSet.getInt("id"), resultSet.getInt("liked")))
                 }
+                connection?.close()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -190,6 +196,7 @@ class Database (context: Context){
 
                 val resultSet = statement?.executeQuery(query);
                 likedReview = true;
+                connection?.close()
             } catch (e: PSQLException){
                 if(e.message.toString().contains("duplicate key value violates unique constraint")){
                     val deleteQuery = "delete from liked_reviews where user_id=$userId and review_id=$reviewId returning id"
@@ -219,6 +226,7 @@ class Database (context: Context){
                 val query = "delete from reviews where id=$id returning id"
                 val resultSet = statement?.executeQuery(query);
                 deletedReview = true;
+                connection?.close()
             }
             catch (e: Exception) {
                 e.printStackTrace()

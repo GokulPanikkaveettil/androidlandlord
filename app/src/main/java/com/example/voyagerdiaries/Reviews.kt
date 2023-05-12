@@ -79,7 +79,8 @@ class Reviews : AppCompatActivity() {
             override fun onItemClick(position: Int, reviewId: Int) {
                 val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                 val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
-                val liked = db.likeReview(userId!!, reviewId)
+                val db2 = Database(this@Reviews)
+                val liked = db2.likeReview(userId!!, reviewId)
                 if(liked){
                     likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
                 }

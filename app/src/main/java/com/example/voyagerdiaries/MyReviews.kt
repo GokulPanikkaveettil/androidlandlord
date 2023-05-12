@@ -88,11 +88,12 @@ class MyReviews : AppCompatActivity() {
                     }
                 }
                 else if (action == "delete"){
-                    val deletebutton =
-                        buttonHolder?.itemView?.findViewById<ImageView>(R.id.deleteButton);
                     val delete = db.deleteReview(reviewId)
                     if (delete) {
-                        buttonHolder?.itemView?.visibility = View.GONE
+                        reviewList.removeAt(position)
+                            println(reviewList)
+                        itemAdapter.notifyItemRemoved(position)
+
                     }
                 }
             }

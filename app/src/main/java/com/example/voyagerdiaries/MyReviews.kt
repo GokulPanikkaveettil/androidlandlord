@@ -82,7 +82,7 @@ class MyReviews : AppCompatActivity() {
         itemAdapter.setOnItemClickListener(object: MyReviewsItemAdapter.onItemClickListener{
             override fun onItemClick(position: Int, reviewId: Int, action: String) {
                 val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                if (action == "liked") {
+                if (action == "like") {
                     val likedbutton =
                         buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
                     val db2 = Database(this@MyReviews)

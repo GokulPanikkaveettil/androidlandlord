@@ -2,6 +2,7 @@ package com.example.voyagerdiaries
 
 import Database
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemCl
     var reviewId: Int = 0;
     val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
     val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton);
+    val editButton: ImageView = itemView.findViewById(R.id.editButton);
 
     init {
         likeButton.setOnClickListener{
@@ -26,6 +28,9 @@ class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemCl
         }
         deleteButton.setOnClickListener{
             listener.onItemClick(adapterPosition, reviewId, "delete")
+        }
+        editButton.setOnClickListener{
+            listener.onItemClick(adapterPosition, reviewId, "edit")
         }
     }
 }
@@ -97,6 +102,14 @@ class MyReviews : AppCompatActivity() {
                         itemAdapter.notifyItemRemoved(position)
 
                     }
+                }
+
+                else if (action == "edit"){
+                    val reviewText = buttonHolder?.itemView?.findViewById<TextView>(R.id.reviewText)
+                    val editReviewIntent = Intent(this@MyReviews, EditReview::class.java)
+                    editReviewIntent.putExtra("review", reviewText?.text.toString())
+                    editReviewIntent.putExtra("reviewId", reviewId.toString())
+                    startActivity(editReviewIntent)
                 }
             }
 

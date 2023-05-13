@@ -44,6 +44,9 @@
         <activity
             android:name=".CreateReviews"
             android:label="Post Reviews" />
+        <activity
+            android:name=".EditReview"
+            android:label="Edit Review" />
     </application>
 
 </manifest>

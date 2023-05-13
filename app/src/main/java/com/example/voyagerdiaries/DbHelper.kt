@@ -218,12 +218,12 @@ class Database (context: Context){
         return likedReview
     }
 
-    fun deleteReview(id: Int): Boolean{
+    fun deleteReview(reviewId: Int): Boolean{
         var deletedReview = false;
         val thread = Thread {
             val statement = connection?.createStatement();
             try {
-                val query = "delete from reviews where id=$id returning id"
+                val query = "delete from reviews where id=$reviewId returning id"
                 val resultSet = statement?.executeQuery(query);
                 deletedReview = true;
                 connection?.close()
@@ -241,6 +241,27 @@ class Database (context: Context){
             e.printStackTrace()
         }
         return deletedReview
+    }
+
+
+    fun editReview(reviewId: Int, review: String){
+        val thread = Thread {
+            val statement = connection?.createStatement();
+            try {
+                val query = "update reviews set review='$review' where id=$reviewId returning id"
+                val resultSet = statement?.executeQuery(query);
+                connection?.close()
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 }

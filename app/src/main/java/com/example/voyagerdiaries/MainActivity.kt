@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
         if (userId != null){
-            val intentMainActivity = Intent(this, MyReviews::class.java)
+            val intentMainActivity = Intent(this, Reviews::class.java)
             startActivity(intentMainActivity)
         }
         setContentView(R.layout.activity_main)

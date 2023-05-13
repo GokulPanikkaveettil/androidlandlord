@@ -8,4 +8,6 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
+    app:itemIconTint="@color/bottom_nav_item_background"
+    app:itemTextColor="@color/bottom_nav_item_background"
     app:menu="@menu/nav_menu"/>

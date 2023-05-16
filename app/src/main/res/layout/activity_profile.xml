@@ -14,10 +14,22 @@
         android:layout_height="155dp"
         android:layout_marginStart="40dp"
         android:layout_marginTop="119dp"
+        android:background="@color/custom_blue"
         android:contentDescription="Profile Update"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_person_24" />
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/profileUpdateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Profile"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/profileUpdateView"
+        app:layout_constraintEnd_toEndOf="@+id/profileUpdateView"
+        app:layout_constraintStart_toStartOf="@+id/profileUpdateView"
+        app:layout_constraintTop_toTopOf="@+id/profileUpdateView"/>
+
 
     <ImageButton
         android:id="@+id/myReviewsList"
@@ -25,9 +37,21 @@
         android:layout_height="155dp"
         android:layout_marginTop="119dp"
         android:layout_marginEnd="21dp"
+        android:background="@color/custom_blue"
         android:contentDescription="My Reviews"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_post_add_24" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/myReviewsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My reviews"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/myReviewsList"
+        app:layout_constraintEnd_toEndOf="@+id/myReviewsList"
+        app:layout_constraintStart_toStartOf="@+id/myReviewsList"
+        app:layout_constraintTop_toTopOf="@+id/myReviewsList"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

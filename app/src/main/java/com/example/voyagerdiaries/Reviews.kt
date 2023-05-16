@@ -50,8 +50,13 @@ class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<Revi
         holder.reviewText.text = review.review
         holder.userName.text = review.fullName
         holder.reviewId = review.reviewId
+
         if (review.liked == 1){
             holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24);
+            holder.likeButton.setTag("unlike")
+        }
+        else{
+            holder.likeButton.setTag("like")
         }
     }
 
@@ -79,15 +84,17 @@ class Reviews : AppCompatActivity() {
             override fun onItemClick(position: Int, reviewId: Int) {
                 val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                 val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
+                Toast.makeText(this@Reviews, likedbutton?.tag.toString(),Toast.LENGTH_SHORT).show()
+                if (likedbutton?.tag.toString() == "like"){
+                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
+                    likedbutton?.setTag("unlike");
+                }
+                else {
+                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
+                    likedbutton?.setTag("like");
+                }
                 val db2 = Database(this@Reviews)
                 val liked = db2.likeReview(userId!!, reviewId)
-                if(liked){
-                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
-                }
-                else{
-                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24);
-                }
-                Toast.makeText(this@Reviews, "you clicked review $reviewId",Toast.LENGTH_SHORT).show()
             }
         })
 

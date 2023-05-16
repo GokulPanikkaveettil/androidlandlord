@@ -94,14 +94,11 @@ class MyReviews : AppCompatActivity() {
                     }
                 }
                 else if (action == "delete"){
+                    reviewList.removeAt(position)
+                    println(reviewList)
+                    itemAdapter.notifyItemRemoved(position)
                     val db2 = Database(this@MyReviews)
                     val delete = db2.deleteReview(reviewId)
-                    if (delete) {
-                        reviewList.removeAt(position)
-                            println(reviewList)
-                        itemAdapter.notifyItemRemoved(position)
-
-                    }
                 }
 
                 else if (action == "edit"){

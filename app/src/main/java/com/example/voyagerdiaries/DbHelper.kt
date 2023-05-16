@@ -8,9 +8,9 @@ import java.sql.DriverManager
 
 class Database (context: Context){
     private var connection: Connection? = null
-    private val user = "voyageradmin"
-    private val pass = "voyageradmin"
-    private var url = "jdbc:postgresql://10.0.2.2:5432/voyager_db"
+    private val user = "zjcjmmse"
+    private val pass = "gp_LDmHthXvylqUAbb2S2okzyHYDLZj-"
+    private var url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
     private var status = false
     private var context: Context = context
 
@@ -21,7 +21,6 @@ class Database (context: Context){
 
     private fun connect() {
         val thread = Thread {
-            println(":::>>>>>>>>>")
             try {
                 Class.forName("org.postgresql.Driver")
                 connection = DriverManager.getConnection(url, user, pass)

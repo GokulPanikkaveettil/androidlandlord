@@ -19,6 +19,7 @@ class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemCl
     RecyclerView.ViewHolder(itemView) {
     val reviewText: TextView = itemView.findViewById(R.id.reviewText);
     val userName: TextView = itemView.findViewById(R.id.reviewedUser);
+    val likeCount: TextView = itemView.findViewById(R.id.like_count);
     var reviewId: Int = 0;
     val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
     val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton);
@@ -59,6 +60,7 @@ class MyReviewsItemAdapter(private val reviews: List<Review>) :
         holder.reviewText.text = review.review
         holder.userName.text = review.fullName
         holder.reviewId = review.reviewId
+        holder.likeCount.text = review.likeCount.toString()
         if (review.liked == 1) {
             holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24);
             holder.likeButton.setTag("unlike")
@@ -103,9 +105,13 @@ class MyReviews : AppCompatActivity() {
                         if (likedbutton?.tag.toString() == "like") {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
                             likedbutton?.setTag("unlike");
+                            val like_count = buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
+                            buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() + 1).toString()
                         } else {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
                             likedbutton?.setTag("like");
+                            val like_count = buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
+                            buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() - 1).toString()
                         }
                     } else if (action == "delete") {
                         coroutineScope.launch {

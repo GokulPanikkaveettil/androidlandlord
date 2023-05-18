@@ -18,6 +18,7 @@
         android:contentDescription="Profile Update"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/profileUpdateText"
         android:layout_width="wrap_content"
@@ -28,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/profileUpdateView"
         app:layout_constraintEnd_toEndOf="@+id/profileUpdateView"
         app:layout_constraintStart_toStartOf="@+id/profileUpdateView"
-        app:layout_constraintTop_toTopOf="@+id/profileUpdateView"/>
+        app:layout_constraintTop_toTopOf="@+id/profileUpdateView" />
 
 
     <ImageButton
@@ -52,6 +53,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/myReviewsList"
         app:layout_constraintEnd_toEndOf="@+id/myReviewsList"
         app:layout_constraintStart_toStartOf="@+id/myReviewsList"
-        app:layout_constraintTop_toTopOf="@+id/myReviewsList"/>
+        app:layout_constraintTop_toTopOf="@+id/myReviewsList" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

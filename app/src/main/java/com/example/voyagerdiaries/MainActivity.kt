@@ -17,7 +17,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val voyagerdiariesPref =
             this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+        // Retrieve user ID from shared preferences
         val userId = voyagerdiariesPref.getString("id", null);
+        // If user ID exists, start Reviews activity
         if (userId != null) {
             val intentMainActivity = Intent(this, Reviews::class.java)
             startActivity(intentMainActivity)
@@ -25,20 +27,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val buttonSignup = findViewById<Button>(R.id.signup);
         val buttonLogin = findViewById<Button>(R.id.login);
+        // Button click listener for Signup button
         buttonSignup.setOnClickListener {
             val intent = Intent(this, SignUp::class.java)
             startActivity(intent)
         }
-
+        // Button click listener for Login button
         buttonLogin.setOnClickListener {
             val intent = Intent(this, Reviews::class.java)
             val userName = findViewById<EditText>(R.id.editTextUsernameLogin);
             val password = findViewById<EditText>(R.id.editTextPasswordLogin);
+            // Launch a coroutine to perform authentication
             coroutineScope.launch {
                 val checkAuthentication =
                     authenticate(userName.text.toString().trim(), password.text.toString().trim())
                 if (checkAuthentication) {
                     startActivity(intent)
+                    // If authentication is successful, start Reviews activity and show success toast message
                     Toast.makeText(
                         this@MainActivity,
                         "Authentication successful....",
@@ -54,6 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        //when activity destroy is called we cancel the coroutine scope.
         super.onDestroy()
         coroutineScope.cancel()
     }

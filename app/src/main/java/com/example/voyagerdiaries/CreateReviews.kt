@@ -36,12 +36,23 @@ class CreateReviews : AppCompatActivity() {
                 ).show()
             } else {
                 coroutineScope.launch {
-                    addReview(reviewText.text.toString())
-                    reviewText.setText("")
+                    val reviewAdded = addReview(reviewText.text.toString())
+                    if(reviewAdded) {
+                        val intent = Intent(this@CreateReviews, Reviews::class.java)
+                        startActivity(intent)
+                        reviewText.setText("")
+                    }
+                    else
+                    {
+                        Toast.makeText(
+                            this@CreateReviews,
+                            "Review Add failed. Please modify your input.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
 
-                val intent = Intent(this, Reviews::class.java)
-                startActivity(intent)
+
 
             }
         }
@@ -58,7 +69,6 @@ class CreateReviews : AppCompatActivity() {
         return@withContext try {
             val db = Database(this@CreateReviews)
             db.postUserReviews(review)
-            true
         } catch (e: Exception) {
             e.printStackTrace()
             false

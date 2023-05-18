@@ -108,11 +108,12 @@ class Database(context: Context) {
     }
 
 
-    fun postUserReviews(reviews: String) {
+    fun postUserReviews(reviews: String): Boolean {
         /*
         we insert the review when a user post from review add screen
         we take the user ID from sharedpreference and insert the review text passed as parameter
          */
+        var reviewAdded = true
         val voyagerdiariesPref =
             context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
@@ -124,9 +125,11 @@ class Database(context: Context) {
 
         } catch (e: Exception) {
             e.printStackTrace()
+            reviewAdded = false
         } finally {
             connection?.close()
         }
+        return reviewAdded
     }
 
     fun updateProfile(firstName: String, lastName: String) {
@@ -206,7 +209,7 @@ class Database(context: Context) {
                 "insert into liked_reviews (user_id,review_id) values ($userId,$reviewId) returning id"
 
             val resultSet = statement?.executeQuery(query);
-            statement?.executeUpdate("UPDATE reviews SET like_count = like_count + 1 WHERE id =$reviewId returning like_count")
+            statement?.execute("UPDATE reviews SET like_count = like_count + 1 WHERE id =$reviewId returning like_count")
             likedReview = true;
             statement?.close()
         } catch (e: PSQLException) {
@@ -214,7 +217,7 @@ class Database(context: Context) {
                 val deleteQuery =
                     "delete from liked_reviews where user_id=$userId and review_id=$reviewId returning id"
                 statement?.execute(deleteQuery);
-                statement?.executeUpdate("UPDATE reviews SET like_count = like_count - 1 WHERE id =$reviewId returning like_count")
+                statement?.execute("UPDATE reviews SET like_count = like_count - 1 WHERE id =$reviewId returning like_count")
                 statement?.close()
             }
         } catch (e: Exception) {

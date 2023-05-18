@@ -4,7 +4,6 @@ import Database
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -15,6 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.*
+import org.postgresql.util.PSQLException
+import java.sql.Connection
+import java.sql.DriverManager
+import kotlinx.coroutines.withContext
 
 
 data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int)
@@ -74,48 +77,79 @@ class Reviews : AppCompatActivity() {
         setContentView(R.layout.reviews)
         val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
-        val db = Database(this);
-        reviewList = db.getAllReview(userId);
+
+        coroutineScope.launch {
+            reviewList = getReview(userId!!)
+            val recyclerView = findViewById<RecyclerView>(R.id.allReviews)
+            recyclerView.layoutManager = LinearLayoutManager(this@Reviews)
+            val itemAdapter = ItemAdapter(reviewList)
+            recyclerView.adapter = itemAdapter
+            itemAdapter.setOnItemClickListener(object: ItemAdapter.onItemClickListener{
+                override fun onItemClick(position: Int, reviewId: Int) {
+                    val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                    val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
+                    Toast.makeText(this@Reviews, likedbutton?.tag.toString(),Toast.LENGTH_SHORT).show()
+                    if (likedbutton?.tag.toString() == "like"){
+                        likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
+                        likedbutton?.setTag("unlike");
+                    }
+                    else {
+                        likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
+                        likedbutton?.setTag("like");
+                    }
+                    coroutineScope.launch {
+                        val liked = likeReview(userId!!, reviewId)
+                        println(liked)
+                    }
+                }
+            })
+        }
         val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView);
         navbarActions(this, nav);
 
-        val recyclerView = findViewById<RecyclerView>(R.id.allReviews)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        val itemAdapter = ItemAdapter(reviewList)
-        recyclerView.adapter = itemAdapter
-        itemAdapter.setOnItemClickListener(object: ItemAdapter.onItemClickListener{
-            override fun onItemClick(position: Int, reviewId: Int) {
-                val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
-                Toast.makeText(this@Reviews, likedbutton?.tag.toString(),Toast.LENGTH_SHORT).show()
-                if (likedbutton?.tag.toString() == "like"){
-                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
-                    likedbutton?.setTag("unlike");
-                }
-                else {
-                    likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
-                    likedbutton?.setTag("like");
-                }
-                coroutineScope.launch {
-                    val liked = likeReview(userId!!, reviewId)
-                    println(liked)
-                }
 
-            }
-        })
+
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // Cancel all coroutines when the activity is destroyed
         coroutineScope.cancel()
     }
 
-    private suspend fun likeReview(userId: String, reviewId: Int): Boolean {
-        delay(200) // Simulating a long-running task
-        val db2 = Database(this@Reviews)
-        val liked = db2.likeReview(userId, reviewId)
-        return liked
+    private suspend fun getReview(userId: String, usersReview: Boolean=false): MutableList<Review> = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val db = Database(this@Reviews)
+            db.getAllReview(userId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            reviewList
+        }
     }
+
+    private suspend fun likeReview(userId: String, reviewId: Int): Boolean = withContext(Dispatchers.IO) {
+        var connection: Connection? = null
+        val user = "zjcjmmse"
+        val pass = "gp_LDmHthXvylqUAbb2S2okzyHYDLZj-"
+        val url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
+        var status = false
+
+        return@withContext try {
+            connection = DriverManager.getConnection(url, user, pass)
+            val query = "insert into liked_reviews (user_id,review_id) values ($userId,$reviewId) returning id"
+            val statement = connection?.createStatement()
+            val resultSet = statement?.executeQuery(query)
+            true
+        } catch (e: PSQLException) {
+            if (e.message.toString().contains("duplicate key value violates unique constraint")) {
+                val statement = connection?.createStatement()
+                val deleteQuery = "delete from liked_reviews where user_id=$userId and review_id=$reviewId returning id"
+                statement?.executeQuery(deleteQuery)
+            }
+            false
+        } finally {
+            connection?.close()
+        }
+    }
+
 }

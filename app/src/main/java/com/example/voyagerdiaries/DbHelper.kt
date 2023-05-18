@@ -1,5 +1,8 @@
 import android.content.Context
 import com.example.voyagerdiaries.Review
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.postgresql.util.PSQLException
 import java.security.MessageDigest
 import java.sql.Connection
@@ -13,6 +16,7 @@ class Database (context: Context){
     private var url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
     private var status = false
     private var context: Context = context
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     init {
         connect()
@@ -20,23 +24,14 @@ class Database (context: Context){
     }
 
     private fun connect() {
-        val thread = Thread {
-            try {
-                Class.forName("org.postgresql.Driver")
-                connection = DriverManager.getConnection(url, user, pass)
-                status = true
-            } catch (e: Exception) {
-                status = false
-                print(e.message)
-                e.printStackTrace()
-            }
-        }
-        thread.start()
         try {
-            thread.join()
+            Class.forName("org.postgresql.Driver")
+            connection = DriverManager.getConnection(url, user, pass)
+            status = true
         } catch (e: Exception) {
-            e.printStackTrace()
             status = false
+            print(e.message)
+            e.printStackTrace()
         }
     }
 
@@ -67,7 +62,6 @@ class Database (context: Context){
 
     fun authenticateUser(userName: String, password: String): Boolean{
         var authenticationSuccess = false;
-        val thread = Thread {
             val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray()).joinToString("") { "%02x".format(it) }
             val query = "select * from  users where username='$userName' and password='$encryptedPassword'"
 
@@ -93,13 +87,6 @@ class Database (context: Context){
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         return authenticationSuccess
     }
 
@@ -155,7 +142,6 @@ class Database (context: Context){
 
     fun getAllReview(userId: String? = null, usersReview: Boolean = false): MutableList<Review>{
         val reviewList = mutableListOf<Review>();
-        val thread = Thread {
             var query = "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id order by a.id desc;";
             if (userId!!.isNotEmpty()){
                 query = "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id ORDER BY r.id DESC; "
@@ -174,14 +160,6 @@ class Database (context: Context){
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         return reviewList
     }
 

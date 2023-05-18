@@ -18,11 +18,11 @@ class Profile : AppCompatActivity() {
 
 
         val profileUpdateView = findViewById<ImageButton>(R.id.profileUpdateView)
-        profileUpdateView.setOnClickListener{
+        profileUpdateView.setOnClickListener {
             startActivity(Intent(this, ProfileUpdate::class.java))
         }
         val myReviewsList = findViewById<ImageButton>(R.id.myReviewsList)
-        myReviewsList.setOnClickListener{
+        myReviewsList.setOnClickListener {
             startActivity(Intent(this, MyReviews::class.java))
         }
     }

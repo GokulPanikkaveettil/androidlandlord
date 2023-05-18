@@ -4,10 +4,9 @@ import android.content.Context
 import android.content.Intent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-fun navbarActions(context: Context, nav: BottomNavigationView){
-    // common function to handle setOnItemSelectedListener of bottom navigation bar
+fun navbarActions(context: Context, nav: BottomNavigationView) {
     nav.setOnItemSelectedListener {
-        when(it.itemId){
+        when (it.itemId) {
             R.id.navbar_profile -> {
                 val updateProfile = Intent(context, Profile::class.java)
                 context.startActivity(updateProfile)
@@ -24,7 +23,8 @@ fun navbarActions(context: Context, nav: BottomNavigationView){
             }
 
             R.id.logout -> {
-                val voyagerdiariesPref = context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+                val voyagerdiariesPref =
+                    context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
                 val editor = voyagerdiariesPref.edit()
                 editor.remove("id")
                 editor.remove("firstName")

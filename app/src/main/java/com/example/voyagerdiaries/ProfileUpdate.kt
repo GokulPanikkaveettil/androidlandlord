@@ -23,9 +23,10 @@ class ProfileUpdate : AppCompatActivity() {
         selectedItem?.setChecked(true)
         navbarActions(this, nav);
 
-        val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+        val voyagerdiariesPref =
+            this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
-        if (userId == null){
+        if (userId == null) {
             val intentMainActivity = Intent(this, MainActivity::class.java)
             startActivity(intentMainActivity)
         }
@@ -43,13 +44,15 @@ class ProfileUpdate : AppCompatActivity() {
         }
 
     }
+
     override fun onDestroy() {
         super.onDestroy()
         coroutineScope.cancel()
     }
 
     private suspend fun updateProfile(firstName: String, lastName: String): Boolean = withContext(
-        Dispatchers.IO) {
+        Dispatchers.IO
+    ) {
         return@withContext try {
             val db = Database(this@ProfileUpdate)
             db.updateProfile(firstName, lastName)

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.*
 
-class CreateReviews: AppCompatActivity() {
+class CreateReviews : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,9 +25,12 @@ class CreateReviews: AppCompatActivity() {
         selectedItem?.setChecked(true)
         postReviewButton.setOnClickListener {
             if (reviewText.text.isBlank() == true) {
-                Toast.makeText(this, "We appreciate your feedback, but we cannot accept empty reviews.", Toast.LENGTH_SHORT).show()
-            }
-            else {
+                Toast.makeText(
+                    this,
+                    "We appreciate your feedback, but we cannot accept empty reviews.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
                 coroutineScope.launch {
                     addReview(reviewText.text.toString())
                     reviewText.setText("")
@@ -46,7 +49,8 @@ class CreateReviews: AppCompatActivity() {
     }
 
     private suspend fun addReview(review: String): Boolean = withContext(
-        Dispatchers.IO) {
+        Dispatchers.IO
+    ) {
         return@withContext try {
             val db = Database(this@CreateReviews)
             db.postUserReviews(review)

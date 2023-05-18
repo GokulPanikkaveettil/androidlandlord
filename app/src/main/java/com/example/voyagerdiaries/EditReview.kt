@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.*
 
 
-class EditReview: AppCompatActivity() {
+class EditReview : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -37,13 +37,15 @@ class EditReview: AppCompatActivity() {
         }
 
     }
+
     override fun onDestroy() {
         super.onDestroy()
         coroutineScope.cancel()
     }
 
     private suspend fun getReview(reviewId: Int, review: String): Boolean = withContext(
-        Dispatchers.IO) {
+        Dispatchers.IO
+    ) {
         return@withContext try {
             val db = Database(this@EditReview)
             db.editReview(reviewId, review)

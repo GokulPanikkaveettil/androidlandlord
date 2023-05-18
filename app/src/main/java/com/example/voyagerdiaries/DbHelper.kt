@@ -38,7 +38,12 @@ class Database(context: Context) {
         }
     }
 
-    fun addNewUser(firstName: String,lastName: String,userName: String,password: String): Boolean {
+    fun addNewUser(
+        firstName: String,
+        lastName: String,
+        userName: String,
+        password: String
+    ): Boolean {
         var userAdded = false;
         /*every password should be encrypted using any hashing algorithm
         here we use SHA-1 algorthm to convert user input to encrypted string.
@@ -52,10 +57,12 @@ class Database(context: Context) {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
             userAdded = true;
-            connection?.close()
+
         } catch (e: Exception) {
             userAdded = false;
             e.printStackTrace()
+        } finally {
+            connection?.close()
         }
         return userAdded
     }
@@ -114,9 +121,11 @@ class Database(context: Context) {
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
-            connection?.close()
+
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            connection?.close()
         }
     }
 
@@ -139,9 +148,11 @@ class Database(context: Context) {
                 editor.putString("lastName", lastName);
                 editor.apply()
             }
-            connection?.close()
+
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            connection?.close()
         }
     }
 
@@ -208,8 +219,7 @@ class Database(context: Context) {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-        finally {
+        } finally {
             connection?.close()
         }
         return likedReview
@@ -226,9 +236,11 @@ class Database(context: Context) {
             val query = "delete from reviews where id=$reviewId returning id"
             val resultSet = statement?.executeQuery(query);
             deletedReview = true;
-            connection?.close()
+
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            connection?.close()
         }
         return deletedReview
     }
@@ -243,9 +255,11 @@ class Database(context: Context) {
         try {
             val query = "update reviews set review='$review' where id=$reviewId returning id"
             val resultSet = statement?.executeQuery(query);
-            connection?.close()
+
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            connection?.close()
         }
     }
 

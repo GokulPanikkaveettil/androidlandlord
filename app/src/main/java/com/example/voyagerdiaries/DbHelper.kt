@@ -92,7 +92,6 @@ class Database (context: Context){
 
 
     fun postUserReviews(reviews: String){
-        val thread = Thread {
             val voyagerdiariesPref = context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
             val userId = voyagerdiariesPref.getString("id", null);
             val query = "insert into reviews (review, user_id) values ('$reviews','$userId') returning id";
@@ -103,17 +102,9 @@ class Database (context: Context){
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     fun updateProfile(firstName: String, lastName: String){
-        val thread = Thread {
             val voyagerdiariesPref = context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
             val userId = voyagerdiariesPref.getString("id", null);
             val query = "update users set first_name='$firstName', last_name='$lastName' where id=$userId returning id";
@@ -130,14 +121,6 @@ class Database (context: Context){
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     fun getAllReview(userId: String? = null, usersReview: Boolean = false): MutableList<Review>{
@@ -164,7 +147,6 @@ class Database (context: Context){
 
     fun likeReview(userId: String, reviewId: Int): Boolean{
         var likedReview = false;
-        val thread = Thread {
             val statement = connection?.createStatement();
             try {
                 val query =
@@ -183,20 +165,11 @@ class Database (context: Context){
             catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         return likedReview
     }
 
     fun deleteReview(reviewId: Int): Boolean{
         var deletedReview = false;
-        val thread = Thread {
             val statement = connection?.createStatement();
             try {
                 val query = "delete from reviews where id=$reviewId returning id"
@@ -207,21 +180,11 @@ class Database (context: Context){
             catch (e: Exception) {
                 e.printStackTrace()
             }
-
-        }
-
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         return deletedReview
     }
 
 
     fun editReview(reviewId: Int, review: String){
-        val thread = Thread {
             val statement = connection?.createStatement();
             try {
                 val query = "update reviews set review='$review' where id=$reviewId returning id"
@@ -231,13 +194,6 @@ class Database (context: Context){
             catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
 }

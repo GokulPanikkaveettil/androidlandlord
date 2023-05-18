@@ -57,6 +57,10 @@ class MyReviewsItemAdapter(private val reviews: List<Review>) : RecyclerView.Ada
         holder.reviewId = review.reviewId
         if (review.liked == 1){
             holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24);
+            holder.likeButton.setTag("unlike")
+        }
+        else{
+            holder.likeButton.setTag("like")
         }
     }
 
@@ -87,19 +91,25 @@ class MyReviews : AppCompatActivity() {
                     if (action == "like") {
                         val likedbutton =
                             buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
-                        val db2 = Database(this@MyReviews)
-                        val liked = db2.likeReview(userId!!, reviewId)
-                        if (liked) {
-                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
-                        } else {
-                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24);
+                        coroutineScope.launch {
+                            likeReview(userId, reviewId)
+                        }
+
+                        if (likedbutton?.tag.toString() == "like"){
+                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
+                            likedbutton?.setTag("unlike");
+                        }
+                        else {
+                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
+                            likedbutton?.setTag("like");
                         }
                     }
                     else if (action == "delete"){
-                        reviewList.removeAt(position)
-                        itemAdapter.notifyItemRemoved(position)
-                        val db2 = Database(this@MyReviews)
-                        val delete = db2.deleteReview(reviewId)
+                        coroutineScope.launch {
+                            deleteReview(reviewId)
+                            reviewList.removeAt(position)
+                            itemAdapter.notifyItemRemoved(position)
+                        }
                     }
 
                     else if (action == "edit"){
@@ -117,6 +127,27 @@ class MyReviews : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         coroutineScope.cancel()
+    }
+    private suspend fun deleteReview(reviewId: Int): Boolean = withContext(Dispatchers.IO){
+        return@withContext try {
+            val db = Database(this@MyReviews)
+            db.deleteReview(reviewId)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    private suspend fun likeReview(userId: String, reviewId: Int): Boolean = withContext(Dispatchers.IO){
+        return@withContext try {
+            val db = Database(this@MyReviews)
+            db.likeReview(userId, reviewId)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
     private suspend fun getReview(userId: String, usersReview: Boolean=true): MutableList<Review> = withContext(

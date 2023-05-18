@@ -7,9 +7,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.*
 
 
 class EditReview: AppCompatActivity() {
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_or_update_reviews);
@@ -27,11 +29,28 @@ class EditReview: AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                val db = Database(this@EditReview);
-                db.editReview(reviewId!!.toInt(), editReview.text.toString())
+                coroutineScope.launch {
+                    getReview(reviewId!!.toInt(), editReview.text.toString())
+                }
                 startActivity(Intent(this, MyReviews::class.java))
             }
         }
 
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+    }
+
+    private suspend fun getReview(reviewId: Int, review: String): Boolean = withContext(
+        Dispatchers.IO) {
+        return@withContext try {
+            val db = Database(this@EditReview)
+            db.editReview(reviewId, review)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 }

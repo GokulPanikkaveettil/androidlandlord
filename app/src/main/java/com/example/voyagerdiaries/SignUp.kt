@@ -7,11 +7,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.*
 
 class SignUp : AppCompatActivity() {
-    private val user = "voyageradmin"
-    private val pass = "voyageradmin"
-    private var url = "jdbc:postgresql://10.0.2.2:5432/voyager_db"
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup);
@@ -25,19 +24,37 @@ class SignUp : AppCompatActivity() {
         button.setOnClickListener {
             val formValid = validateInput(firstName.text.toString(), lastName.text.toString(), userName.text.toString(), password.text.toString())
             if(formValid) {
-                val db = Database(this)
-                val userAdded = db.addNewUser(
-                    firstName.text.toString().trim(), lastName.text.toString().trim(),
-                    userName.text.toString().trim(), password.text.toString().trim()
-                )
-                if (userAdded == true) {
-                    Toast.makeText(this, "User Created successfully.", Toast.LENGTH_SHORT).show()
-                    val mainActivityIntent = Intent(this, MainActivity::class.java)
-                    startActivity(mainActivityIntent)
-                } else {
-                    Toast.makeText(this, "Unable to create account..", Toast.LENGTH_SHORT).show()
+                coroutineScope.launch {
+                    val userAdded = addNewUser(
+                        firstName.text.toString().trim(), lastName.text.toString().trim(),
+                        userName.text.toString().trim(), password.text.toString().trim()
+                    )
+                    if (userAdded == true) {
+                        Toast.makeText(this@SignUp, "User Created successfully.", Toast.LENGTH_SHORT)
+                            .show()
+                        val mainActivityIntent = Intent(this@SignUp, MainActivity::class.java)
+                        startActivity(mainActivityIntent)
+                    } else {
+                        Toast.makeText(this@SignUp, "Unable to create account..", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
             }
+        }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+    }
+
+    private suspend fun addNewUser(firstName: String, lastName: String, userName: String, password: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val db = Database(this@SignUp)
+            db.addNewUser(firstName, lastName, userName, password)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
     fun validateInput(firstName: String, lastName: String, userName: String, password: String): Boolean{

@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.*
 
 class ProfileUpdate : AppCompatActivity() {
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_update)
@@ -33,12 +35,28 @@ class ProfileUpdate : AppCompatActivity() {
         updateLastName.setText(lastName);
         val updateButton = findViewById<Button>(R.id.updateProfileButton);
         updateButton.setOnClickListener {
-            val db = Database(this);
-            db.updateProfile(updateFirstName.text.toString(), updateLastName.text.toString());
-            val intent = Intent(this, Reviews::class.java)
-            startActivity(intent)
+            coroutineScope.launch {
+                updateProfile(updateFirstName.text.toString(), updateLastName.text.toString());
+                val intent = Intent(this@ProfileUpdate, Reviews::class.java)
+                startActivity(intent)
+            }
         }
 
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+    }
 
+    private suspend fun updateProfile(firstName: String, lastName: String): Boolean = withContext(
+        Dispatchers.IO) {
+        return@withContext try {
+            val db = Database(this@ProfileUpdate)
+            db.updateProfile(firstName, lastName)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 }

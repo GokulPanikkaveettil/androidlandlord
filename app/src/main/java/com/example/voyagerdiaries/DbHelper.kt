@@ -129,7 +129,7 @@ class Database(context: Context) {
             "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id order by a.id desc;";
         if (userId!!.isNotEmpty()) {
             query =
-                "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id ORDER BY r.id DESC; "
+                "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked,like_count FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id ORDER BY r.id DESC; "
             if (usersReview) {
                 query = query.replace("ORDER BY", "WHERE r.user_id=$userId ORDER BY")
             }
@@ -143,7 +143,9 @@ class Database(context: Context) {
                         resultSet.getString("review"),
                         resultSet.getString("username"),
                         resultSet.getInt("id"),
-                        resultSet.getInt("liked")
+                        resultSet.getInt("liked"),
+                        resultSet.getInt("like_count")
+
                     )
                 )
             }
@@ -162,13 +164,16 @@ class Database(context: Context) {
                 "insert into liked_reviews (user_id,review_id) values ($userId,$reviewId) returning id"
 
             val resultSet = statement?.executeQuery(query);
+            statement?.executeUpdate("UPDATE reviews SET like_count = like_count + 1 WHERE id =$reviewId returning like_count")
             likedReview = true;
             connection?.close()
         } catch (e: PSQLException) {
             if (e.message.toString().contains("duplicate key value violates unique constraint")) {
                 val deleteQuery =
                     "delete from liked_reviews where user_id=$userId and review_id=$reviewId returning id"
-                statement?.executeQuery(deleteQuery)
+                statement?.execute(deleteQuery);
+                statement?.executeUpdate("UPDATE reviews SET like_count = like_count - 1 WHERE id =$reviewId returning like_count")
+                connection?.close()
             }
         } catch (e: Exception) {
             e.printStackTrace()

@@ -20,12 +20,13 @@ import java.sql.DriverManager
 import kotlinx.coroutines.withContext
 
 
-data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int)
+data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int, val likeCount: Int)
 
 class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener) :
     RecyclerView.ViewHolder(itemView) {
     val reviewText: TextView = itemView.findViewById(R.id.reviewText);
     val userName: TextView = itemView.findViewById(R.id.reviewedUser);
+    val likeCount: TextView = itemView.findViewById(R.id.like_count);
     var reviewId: Int = 0;
     val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
 
@@ -57,6 +58,7 @@ class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<Revi
         holder.reviewText.text = review.review
         holder.userName.text = review.fullName
         holder.reviewId = review.reviewId
+        holder.likeCount.text = review.likeCount.toString()
 
         if (review.liked == 1) {
             holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24);
@@ -96,9 +98,13 @@ class Reviews : AppCompatActivity() {
                     if (likedbutton?.tag.toString() == "like") {
                         likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
                         likedbutton?.setTag("unlike");
+                        val like_count = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
+                        likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() + 1).toString()
                     } else {
                         likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
                         likedbutton?.setTag("like");
+                        val like_count = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
+                        likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() - 1).toString()
                     }
                     coroutineScope.launch {
                         val liked = likeReview(userId!!, reviewId)
@@ -132,31 +138,13 @@ class Reviews : AppCompatActivity() {
 
     private suspend fun likeReview(userId: String, reviewId: Int): Boolean =
         withContext(Dispatchers.IO) {
-            var connection: Connection? = null
-            val user = "zjcjmmse"
-            val pass = "gp_LDmHthXvylqUAbb2S2okzyHYDLZj-"
-            val url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
-            var status = false
-
             return@withContext try {
-                connection = DriverManager.getConnection(url, user, pass)
-                val query =
-                    "insert into liked_reviews (user_id,review_id) values ($userId,$reviewId) returning id"
-                val statement = connection?.createStatement()
-                val resultSet = statement?.executeQuery(query)
+                val db = Database(this@Reviews)
+                db.likeReview(userId, reviewId)
                 true
-            } catch (e: PSQLException) {
-                if (e.message.toString()
-                        .contains("duplicate key value violates unique constraint")
-                ) {
-                    val statement = connection?.createStatement()
-                    val deleteQuery =
-                        "delete from liked_reviews where user_id=$userId and review_id=$reviewId returning id"
-                    statement?.executeQuery(deleteQuery)
-                }
+            } catch (e: Exception) {
+                e.printStackTrace()
                 false
-            } finally {
-                connection?.close()
             }
         }
 

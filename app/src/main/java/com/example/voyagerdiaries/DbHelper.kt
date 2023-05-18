@@ -149,7 +149,6 @@ class Database (context: Context){
                     query = query.replace("ORDER BY", "WHERE r.user_id=$userId ORDER BY")
                 }
             }
-            println(query)
             try {
                 val statement = connection?.createStatement();
                 val resultSet = statement?.executeQuery(query);

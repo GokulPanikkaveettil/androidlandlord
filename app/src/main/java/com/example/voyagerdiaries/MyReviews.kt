@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.*
 
 class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemClickListener) : RecyclerView.ViewHolder(itemView) {
     val reviewText: TextView = itemView.findViewById(R.id.reviewText);
@@ -63,6 +64,7 @@ class MyReviewsItemAdapter(private val reviews: List<Review>) : RecyclerView.Ada
 }
 class MyReviews : AppCompatActivity() {
     var reviewList = mutableListOf<Review>();
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_reviews)
@@ -71,45 +73,60 @@ class MyReviews : AppCompatActivity() {
         navbarActions(this, nav);
         val selectedItem = nav.menu.findItem(R.id.navbar_profile)
         selectedItem?.setChecked(true)
-        val db = Database(this);
-        val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-        val userId = voyagerdiariesPref.getString("id", null);
-        reviewList = db.getAllReview(userId, true);
-        val recyclerView = findViewById<RecyclerView>(R.id.myReviews)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        val itemAdapter = MyReviewsItemAdapter(reviewList)
-        recyclerView.adapter = itemAdapter
-        itemAdapter.setOnItemClickListener(object: MyReviewsItemAdapter.onItemClickListener{
-            override fun onItemClick(position: Int, reviewId: Int, action: String) {
-                val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                if (action == "like") {
-                    val likedbutton =
-                        buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
-                    val db2 = Database(this@MyReviews)
-                    val liked = db2.likeReview(userId!!, reviewId)
-                    if (liked) {
-                        likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
-                    } else {
-                        likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24);
+        coroutineScope.launch {
+            val voyagerdiariesPref = this@MyReviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+            val userId = voyagerdiariesPref.getString("id", null);
+            reviewList = getReview(userId!!)
+            val recyclerView = findViewById<RecyclerView>(R.id.myReviews)
+            recyclerView.layoutManager = LinearLayoutManager(this@MyReviews)
+            val itemAdapter = MyReviewsItemAdapter(reviewList)
+            recyclerView.adapter = itemAdapter
+            itemAdapter.setOnItemClickListener(object: MyReviewsItemAdapter.onItemClickListener{
+                override fun onItemClick(position: Int, reviewId: Int, action: String) {
+                    val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                    if (action == "like") {
+                        val likedbutton =
+                            buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
+                        val db2 = Database(this@MyReviews)
+                        val liked = db2.likeReview(userId!!, reviewId)
+                        if (liked) {
+                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24);
+                        } else {
+                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24);
+                        }
+                    }
+                    else if (action == "delete"){
+                        reviewList.removeAt(position)
+                        itemAdapter.notifyItemRemoved(position)
+                        val db2 = Database(this@MyReviews)
+                        val delete = db2.deleteReview(reviewId)
+                    }
+
+                    else if (action == "edit"){
+                        val reviewText = buttonHolder?.itemView?.findViewById<TextView>(R.id.reviewText)
+                        val editReviewIntent = Intent(this@MyReviews, EditReview::class.java)
+                        editReviewIntent.putExtra("review", reviewText?.text.toString())
+                        editReviewIntent.putExtra("reviewId", reviewId.toString())
+                        startActivity(editReviewIntent)
                     }
                 }
-                else if (action == "delete"){
-                    reviewList.removeAt(position)
-                    println(reviewList)
-                    itemAdapter.notifyItemRemoved(position)
-                    val db2 = Database(this@MyReviews)
-                    val delete = db2.deleteReview(reviewId)
-                }
 
-                else if (action == "edit"){
-                    val reviewText = buttonHolder?.itemView?.findViewById<TextView>(R.id.reviewText)
-                    val editReviewIntent = Intent(this@MyReviews, EditReview::class.java)
-                    editReviewIntent.putExtra("review", reviewText?.text.toString())
-                    editReviewIntent.putExtra("reviewId", reviewId.toString())
-                    startActivity(editReviewIntent)
-                }
-            }
+            })
+        }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+    }
 
-        })
+    private suspend fun getReview(userId: String, usersReview: Boolean=true): MutableList<Review> = withContext(
+        Dispatchers.IO) {
+        return@withContext try {
+            val db = Database(this@MyReviews)
+            db.getAllReview(userId, usersReview)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            reviewList
+        }
     }
 }

@@ -99,7 +99,6 @@ class Reviews : AppCompatActivity() {
                     }
                     coroutineScope.launch {
                         val liked = likeReview(userId!!, reviewId)
-                        println(liked)
                     }
                 }
             })

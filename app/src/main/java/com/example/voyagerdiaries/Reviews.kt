@@ -4,6 +4,7 @@ import Database
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.*
 
 
 data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int)
@@ -66,6 +68,7 @@ class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<Revi
 
 class Reviews : AppCompatActivity() {
     var reviewList = mutableListOf<Review>();
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reviews)
@@ -93,11 +96,26 @@ class Reviews : AppCompatActivity() {
                     likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
                     likedbutton?.setTag("like");
                 }
-                val db2 = Database(this@Reviews)
-                val liked = db2.likeReview(userId!!, reviewId)
+                coroutineScope.launch {
+                    val liked = likeReview(userId!!, reviewId)
+                    println(liked)
+                }
+
             }
         })
 
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // Cancel all coroutines when the activity is destroyed
+        coroutineScope.cancel()
+    }
+
+    private suspend fun likeReview(userId: String, reviewId: Int): Boolean {
+        delay(200) // Simulating a long-running task
+        val db2 = Database(this@Reviews)
+        val liked = db2.likeReview(userId, reviewId)
+        return liked
     }
 }

@@ -23,6 +23,10 @@ class CreateReviews : AppCompatActivity() {
         navbarActions(this, nav);
         val selectedItem = nav.menu.findItem(R.id.add_review)
         selectedItem?.setChecked(true)
+        /*
+        when postreview button is clicked we check the review text if empty
+        and then feed to database class function addReview via coroutine.
+         */
         postReviewButton.setOnClickListener {
             if (reviewText.text.isBlank() == true) {
                 Toast.makeText(

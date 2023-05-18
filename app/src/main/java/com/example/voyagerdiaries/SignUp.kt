@@ -64,7 +64,6 @@ class SignUp : AppCompatActivity() {
         return@withContext try {
             val db = Database(this@SignUp)
             db.addNewUser(firstName, lastName, userName, password)
-            true
         } catch (e: Exception) {
             e.printStackTrace()
             false

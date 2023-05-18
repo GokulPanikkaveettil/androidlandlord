@@ -18,6 +18,10 @@ class Database(context: Context) {
     private var context: Context = context
 
     init {
+        /*
+        when Database object is called immediately connect function is called
+        and variable connection value is set to Drivermanager.getConnection
+         */
         connect()
         println("connection status:$status")
     }
@@ -36,6 +40,10 @@ class Database(context: Context) {
 
     fun addNewUser(firstName: String,lastName: String,userName: String,password: String): Boolean {
         var userAdded = false;
+        /*every password should be encrypted using any hashing algorithm
+        here we use SHA-1 algorthm to convert user input to encrypted string.
+         */
+
         val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray())
             .joinToString("") { "%02x".format(it) }
         val query =
@@ -54,6 +62,12 @@ class Database(context: Context) {
 
 
     fun authenticateUser(userName: String, password: String): Boolean {
+        /*
+        when a user enter a username and password the password is encrypted
+        and we check for an entry in database.
+        if the database returns a row we set the username,id,first name and
+        last name into sharedpreference which is like a localstorage in web browser
+         */
         var authenticationSuccess = false;
         val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray())
             .joinToString("") { "%02x".format(it) }
@@ -88,6 +102,10 @@ class Database(context: Context) {
 
 
     fun postUserReviews(reviews: String) {
+        /*
+        we insert the review when a user post from review add screen
+        we take the user ID from sharedpreference and insert the review text passed as parameter
+         */
         val voyagerdiariesPref =
             context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
@@ -103,6 +121,10 @@ class Database(context: Context) {
     }
 
     fun updateProfile(firstName: String, lastName: String) {
+        /*
+        here we update the user's first name and lastname using update SQL query
+        we do not allow user to change username.
+         */
         val voyagerdiariesPref =
             context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
@@ -124,6 +146,10 @@ class Database(context: Context) {
     }
 
     fun getAllReview(userId: String? = null, usersReview: Boolean = false): MutableList<Review> {
+        /*
+        here we call review,username,id liked and like_count using join queries
+        and return a mutable list of Review object
+         */
         val reviewList = mutableListOf<Review>();
         var query =
             "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id order by a.id desc;";
@@ -159,6 +185,11 @@ class Database(context: Context) {
     fun likeReview(userId: String, reviewId: Int): Boolean {
         var likedReview = false;
         val statement = connection?.createStatement();
+        /*
+        we have table liked_reviews and user_id and review_id is inserted into the
+        table and along with that we also increment or decrement the like_count in reviews table
+        based on the outcome of insert query execution.
+         */
         try {
             val query =
                 "insert into liked_reviews (user_id,review_id) values ($userId,$reviewId) returning id"
@@ -185,6 +216,10 @@ class Database(context: Context) {
     }
 
     fun deleteReview(reviewId: Int): Boolean {
+        /*
+        when a user clicks a delete review button we simple execute the
+        delete query and review is deleted based on review_id passed as parameter.
+         */
         var deletedReview = false;
         val statement = connection?.createStatement();
         try {
@@ -200,6 +235,10 @@ class Database(context: Context) {
 
 
     fun editReview(reviewId: Int, review: String) {
+        /*
+        the review passed as parameter is replaced using update query for review with review ID
+        that is also passed as parameter.
+         */
         val statement = connection?.createStatement();
         try {
             val query = "update reviews set review='$review' where id=$reviewId returning id"

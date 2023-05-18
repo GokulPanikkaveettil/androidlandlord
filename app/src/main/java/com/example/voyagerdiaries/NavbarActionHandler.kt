@@ -5,6 +5,10 @@ import android.content.Intent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 fun navbarActions(context: Context, nav: BottomNavigationView) {
+    /* the function accepts context and nav as parameters and check which item
+    is selected and based on that value intent is called and the corresponding
+    activity is called
+    */
     nav.setOnItemSelectedListener {
         when (it.itemId) {
             R.id.navbar_profile -> {

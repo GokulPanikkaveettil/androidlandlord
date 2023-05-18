@@ -93,8 +93,6 @@ class Reviews : AppCompatActivity() {
                     val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                     val likedbutton =
                         likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
-                    Toast.makeText(this@Reviews, likedbutton?.tag.toString(), Toast.LENGTH_SHORT)
-                        .show()
                     if (likedbutton?.tag.toString() == "like") {
                         likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
                         likedbutton?.setTag("unlike");

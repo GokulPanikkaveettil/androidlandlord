@@ -166,17 +166,20 @@ class Database(context: Context) {
             val resultSet = statement?.executeQuery(query);
             statement?.executeUpdate("UPDATE reviews SET like_count = like_count + 1 WHERE id =$reviewId returning like_count")
             likedReview = true;
-            connection?.close()
+            statement?.close()
         } catch (e: PSQLException) {
             if (e.message.toString().contains("duplicate key value violates unique constraint")) {
                 val deleteQuery =
                     "delete from liked_reviews where user_id=$userId and review_id=$reviewId returning id"
                 statement?.execute(deleteQuery);
                 statement?.executeUpdate("UPDATE reviews SET like_count = like_count - 1 WHERE id =$reviewId returning like_count")
-                connection?.close()
+                statement?.close()
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+        finally {
+            connection?.close()
         }
         return likedReview
     }

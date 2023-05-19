@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
             this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         // Retrieve user ID from shared preferences
         val userId = voyagerdiariesPref.getString("id", null);
-        // If user ID exists, start Reviews activity
+        // If user ID exists, start Reviews.kt activity
         if (userId != null) {
             val intentMainActivity = Intent(this, Reviews::class.java)
             startActivity(intentMainActivity)
@@ -43,14 +43,14 @@ class MainActivity : AppCompatActivity() {
                     authenticate(userName.text.toString().trim(), password.text.toString().trim())
                 if (checkAuthentication) {
                     startActivity(intent)
-                    // If authentication is successful, start Reviews activity and show success toast message
+                    // If authentication is successful, start Reviews.kt activity and show success toast message
                     Toast.makeText(
                         this@MainActivity,
                         "Authentication successful....",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    Toast.makeText(this@MainActivity, "Invalid credentials.", Toast.LENGTH_SHORT)
+                    Toast.makeText(this@MainActivity, "Oops! It seems there was an issue with your login.", Toast.LENGTH_SHORT)
                         .show()
                 }
             }

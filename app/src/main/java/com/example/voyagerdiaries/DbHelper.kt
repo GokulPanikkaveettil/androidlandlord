@@ -90,6 +90,7 @@ class Database(context: Context) {
                 val firstName = resultSet.getString("first_name")
                 val lastName = resultSet.getString("last_name")
                 val username = resultSet.getString("username")
+                val isAdmin = resultSet.getString("is_admin")
                 val voyagerdiariesPref =
                     context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
                 val editor = voyagerdiariesPref.edit()
@@ -97,6 +98,7 @@ class Database(context: Context) {
                 editor.putString("firstName", firstName)
                 editor.putString("userName", username)
                 editor.putString("lastName", lastName)
+                editor.putString("isAdmin", isAdmin)
                 editor.apply()
                 connection?.close()
             }

@@ -2,6 +2,7 @@ package com.example.voyagerdiaries
 
 import Database
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,7 @@ import java.sql.DriverManager
 import kotlinx.coroutines.withContext
 
 
-data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int, val likeCount: Int)
+    data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int, val likeCount: Int, val adminReply: String?)
 
 class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener) :
     RecyclerView.ViewHolder(itemView) {
@@ -29,15 +30,20 @@ class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener
     val likeCount: TextView = itemView.findViewById(R.id.like_count);
     var reviewId: Int = 0;
     val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
+    val replyButton: ImageView = itemView.findViewById(R.id.reply);
 
     init {
         likeButton.setOnClickListener {
-            listener.onItemClick(adapterPosition, reviewId)
+            listener.onItemClick(adapterPosition, reviewId, "like")
+        }
+
+        replyButton.setOnClickListener {
+            listener.onItemClick(adapterPosition, reviewId, "reply")
         }
     }
 }
 
-class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<ReviewViewHolder>() {
+class ItemAdapter(private val reviews: List<Review>, val isAdmin:String) : RecyclerView.Adapter<ReviewViewHolder>() {
     private lateinit var holderListener: onItemClickListener
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -46,7 +52,7 @@ class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<Revi
     }
 
     interface onItemClickListener {
-        fun onItemClick(position: Int, reviewId: Int)
+        fun onItemClick(position: Int, reviewId: Int, action: String)
     }
 
     fun setOnItemClickListener(listener: onItemClickListener) {
@@ -59,6 +65,9 @@ class ItemAdapter(private val reviews: List<Review>) : RecyclerView.Adapter<Revi
         holder.userName.text = review.fullName
         holder.reviewId = review.reviewId
         holder.likeCount.text = review.likeCount.toString()
+        if(isAdmin == "f"){
+            holder.replyButton.visibility = View.GONE
+        }
 
         if (review.liked == 1) {
             holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24);
@@ -81,32 +90,43 @@ class Reviews : AppCompatActivity() {
         val voyagerdiariesPref =
             this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
+        val isAdmin = voyagerdiariesPref.getString("isAdmin", null);
 
         coroutineScope.launch {
             reviewList = getReview(userId!!)
             val recyclerView = findViewById<RecyclerView>(R.id.allReviews)
             recyclerView.layoutManager = LinearLayoutManager(this@Reviews)
-            val itemAdapter = ItemAdapter(reviewList)
+            val itemAdapter = ItemAdapter(reviewList, isAdmin.toString())
             recyclerView.adapter = itemAdapter
             itemAdapter.setOnItemClickListener(object : ItemAdapter.onItemClickListener {
-                override fun onItemClick(position: Int, reviewId: Int) {
-                    val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                    val likeCountItem = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
-                    val likedbutton =
-                        likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
-                    if (likedbutton?.tag.toString() == "like") {
-                        likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
-                        likedbutton?.setTag("unlike");
-                        val like_count = likeCountItem?.text.toString()
-                        likeCountItem?.text = (like_count.toInt() + 1).toString()
-                    } else {
-                        likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
-                        likedbutton?.setTag("like");
-                        val like_count = likeCountItem?.text.toString()
-                        likeCountItem?.text = (like_count.toInt() - 1).toString()
+                override fun onItemClick(position: Int, reviewId: Int, action: String) {
+                    if (action == "like") {
+                        val likebuttonHolder =
+                            recyclerView.findViewHolderForAdapterPosition(position)
+                        val likeCountItem =
+                            likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
+                        val likedbutton =
+                            likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
+                        if (likedbutton?.tag.toString() == "like") {
+                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
+                            likedbutton?.setTag("unlike");
+                            val like_count = likeCountItem?.text.toString()
+                            likeCountItem?.text = (like_count.toInt() + 1).toString()
+                        } else {
+                            likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
+                            likedbutton?.setTag("like");
+                            val like_count = likeCountItem?.text.toString()
+                            likeCountItem?.text = (like_count.toInt() - 1).toString()
+                        }
+                        coroutineScope.launch {
+                            val liked = likeReview(userId!!, reviewId)
+                        }
                     }
-                    coroutineScope.launch {
-                        val liked = likeReview(userId!!, reviewId)
+                    if (action == "reply") {
+                        Toast.makeText(this@Reviews, "Reply", Toast.LENGTH_SHORT).show()
+                        val replyReviewIntent = Intent(this@Reviews, ReviewReply::class.java)
+                        replyReviewIntent.putExtra("reviewId", reviewId.toString())
+                        startActivity(replyReviewIntent)
                     }
                 }
             })

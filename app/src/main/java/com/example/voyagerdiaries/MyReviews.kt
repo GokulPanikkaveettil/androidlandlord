@@ -21,6 +21,7 @@ class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemCl
     val reviewText: TextView = itemView.findViewById(R.id.reviewText);
     val userName: TextView = itemView.findViewById(R.id.reviewedUser);
     val likeCount: TextView = itemView.findViewById(R.id.like_count);
+    val adminReply: TextView = itemView.findViewById(R.id.adminReplyText);
     var reviewId: Int = 0;
     val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
     val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton);
@@ -62,6 +63,10 @@ class MyReviewsItemAdapter(private val reviews: List<Review>) :
         holder.userName.text = review.fullName
         holder.reviewId = review.reviewId
         holder.likeCount.text = review.likeCount.toString()
+        holder.adminReply.text = "by Admin:" + review.adminReply.toString()
+        if(review.adminReply!!.isBlank()){
+            holder.adminReply.visibility = View.GONE
+        }
         if (review.liked == 1) {
             holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24);
             holder.likeButton.setTag("unlike")

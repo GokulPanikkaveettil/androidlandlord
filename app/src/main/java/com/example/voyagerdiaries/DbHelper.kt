@@ -23,7 +23,6 @@ class Database(context: Context) {
         and variable connection value is set to Drivermanager.getConnection
          */
         connect()
-        println("connection status:$status")
     }
 
     private fun connect() {
@@ -134,6 +133,26 @@ class Database(context: Context) {
         return reviewAdded
     }
 
+    fun replyUserReviews(reviewId: Int, reply: String): Boolean {
+        /*
+        we update the review field admin_reply with reply posted by admin
+        we take the reviewId as parameter.
+         */
+
+        val query =
+            "update reviews set admin_reply='$reply' where id=$reviewId returning id";
+        try {
+            val statement = connection?.createStatement();
+            val resultSet = statement?.executeQuery(query);
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            connection?.close()
+        }
+        return true
+    }
+
     fun updateProfile(firstName: String, lastName: String) {
         /*
         here we update the user's first name and lastname using update SQL query
@@ -171,12 +190,11 @@ class Database(context: Context) {
             "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id where b.is_active=TRUE order by a.id desc;";
         if (userId!!.isNotEmpty()) {
             query =
-                "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked,like_count FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id WHERE u.is_active=TRUE ORDER BY r.id DESC; "
+                "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked,like_count,admin_reply FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id WHERE u.is_active=TRUE ORDER BY r.id DESC; "
             if (usersReview) {
                 query = query.replace("WHERE u.is_active=TRUE", "WHERE u.is_active=TRUE and r.user_id=$userId ")
             }
         }
-        println(query)
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
@@ -187,7 +205,8 @@ class Database(context: Context) {
                         resultSet.getString("username"),
                         resultSet.getInt("id"),
                         resultSet.getInt("liked"),
-                        resultSet.getInt("like_count")
+                        resultSet.getInt("like_count"),
+                        resultSet.getString("admin_reply")
 
                     )
                 )

@@ -16,10 +16,10 @@ class EditReview : AppCompatActivity() {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_or_update_reviews);
         val intent = intent;
-        val extraValue = intent.getStringExtra("review")
+        val review = intent.getStringExtra("review")
         val reviewId = intent.getStringExtra("reviewId")
         val editReview = findViewById<EditText>(R.id.editTextPostReviews)
-        editReview.setText(extraValue)
+        editReview.setText(review)
         val postReviewButton = findViewById<Button>(R.id.postReview);
         postReviewButton.setOnClickListener {
             if (editReview.text.isBlank() == true) {

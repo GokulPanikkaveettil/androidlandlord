@@ -16,6 +16,9 @@
         android:theme="@style/Theme.VoyagerDiaries"
         tools:targetApi="31">
         <activity
+            android:name=".ReviewReply"
+            android:exported="false" />
+        <activity
             android:name=".MyReviews"
             android:exported="false" />
         <activity

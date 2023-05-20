@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -90,11 +91,19 @@ class MyReviews : AppCompatActivity() {
             reviewList = getReview(userId!!)
             val recyclerView = findViewById<RecyclerView>(R.id.myReviews)
             recyclerView.layoutManager = LinearLayoutManager(this@MyReviews)
+            if (reviewList.size < 1){
+                Toast.makeText(
+                    this@MyReviews,
+                    "Currently, there are no reviews available in this section.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             val itemAdapter = MyReviewsItemAdapter(reviewList)
             recyclerView.adapter = itemAdapter
             itemAdapter.setOnItemClickListener(object : MyReviewsItemAdapter.onItemClickListener {
                 override fun onItemClick(position: Int, reviewId: Int, action: String) {
                     val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                    val likeCountItem = buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
                     if (action == "like") {
                         val likedbutton =
                             buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
@@ -105,13 +114,13 @@ class MyReviews : AppCompatActivity() {
                         if (likedbutton?.tag.toString() == "like") {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
                             likedbutton?.setTag("unlike");
-                            val like_count = buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
-                            buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() + 1).toString()
+                            val like_count = likeCountItem?.text.toString()
+                            likeCountItem?.text = (like_count.toInt() + 1).toString()
                         } else {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
                             likedbutton?.setTag("like");
-                            val like_count = buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
-                            buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() - 1).toString()
+                            val like_count = likeCountItem?.text.toString()
+                            likeCountItem?.text = (like_count.toInt() - 1).toString()
                         }
                     } else if (action == "delete") {
                         coroutineScope.launch {

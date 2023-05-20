@@ -91,18 +91,19 @@ class Reviews : AppCompatActivity() {
             itemAdapter.setOnItemClickListener(object : ItemAdapter.onItemClickListener {
                 override fun onItemClick(position: Int, reviewId: Int) {
                     val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                    val likeCountItem = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
                     val likedbutton =
                         likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
                     if (likedbutton?.tag.toString() == "like") {
                         likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
                         likedbutton?.setTag("unlike");
-                        val like_count = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
-                        likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() + 1).toString()
+                        val like_count = likeCountItem?.text.toString()
+                        likeCountItem?.text = (like_count.toInt() + 1).toString()
                     } else {
                         likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
                         likedbutton?.setTag("like");
-                        val like_count = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text.toString()
-                        likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)?.text = (like_count.toInt() - 1).toString()
+                        val like_count = likeCountItem?.text.toString()
+                        likeCountItem?.text = (like_count.toInt() - 1).toString()
                     }
                     coroutineScope.launch {
                         val liked = likeReview(userId!!, reviewId)

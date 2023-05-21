@@ -123,7 +123,6 @@ class Reviews : AppCompatActivity() {
                         }
                     }
                     if (action == "reply") {
-                        Toast.makeText(this@Reviews, "Reply", Toast.LENGTH_SHORT).show()
                         val replyReviewIntent = Intent(this@Reviews, ReviewReply::class.java)
                         replyReviewIntent.putExtra("reviewId", reviewId.toString())
                         startActivity(replyReviewIntent)

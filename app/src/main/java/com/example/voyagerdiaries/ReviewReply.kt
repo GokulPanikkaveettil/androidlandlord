@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.*
 
 class ReviewReply : AppCompatActivity() {
@@ -17,6 +18,10 @@ class ReviewReply : AppCompatActivity() {
         val replyReviewButton = findViewById<Button>(R.id.replyReview);
         val reviewId = intent.getStringExtra("reviewId")
         val replyText = findViewById<EditText>(R.id.editTextPostReviews);
+        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        val selectedItem = nav.menu.findItem(R.id.navbar_home)
+        selectedItem?.setChecked(true)
+        navbarActions(this, nav);
         replyReviewButton.setOnClickListener {
             if (replyText.text.isBlank() == true) {
                 Toast.makeText(

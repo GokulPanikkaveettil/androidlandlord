@@ -43,34 +43,44 @@ class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener
     }
 }
 
-class ItemAdapter(private val reviews: List<Review>, val isAdmin:String) : RecyclerView.Adapter<ReviewViewHolder>() {
+class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : RecyclerView.Adapter<ReviewViewHolder>() {
     private lateinit var holderListener: onItemClickListener
+
+    // Create the item's view holder.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.review_list_layout, parent, false)
+        // Inflate the layout for the item view
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.review_list_layout, parent, false)
         return ReviewViewHolder(itemView, holderListener)
     }
 
+    // Interface for item click listener
     interface onItemClickListener {
         fun onItemClick(position: Int, reviewId: Int, action: String)
     }
 
+    // Configure the item click listener
     fun setOnItemClickListener(listener: onItemClickListener) {
         holderListener = listener
     }
 
+    // Bind data to the view holder
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = reviews[position]
+
+        // Set the review text and user name
         holder.reviewText.text = review.review
         holder.userName.text = review.fullName
         holder.reviewId = review.reviewId
         holder.likeCount.text = review.likeCount.toString()
-        if(isAdmin == "f"){
+
+        // If the user is not an admin, check and hide the respond button.
+        if (isAdmin == "f") {
             holder.replyButton.visibility = View.GONE
         }
 
+        // Based on the review's liked status, set the like button's image and tag.
         if (review.liked == 1) {
-            holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24);
+            holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24)
             holder.likeButton.setTag("unlike")
         } else {
             holder.likeButton.setTag("like")
@@ -81,48 +91,59 @@ class ItemAdapter(private val reviews: List<Review>, val isAdmin:String) : Recyc
 }
 
 
+
 class Reviews : AppCompatActivity() {
-    var reviewList = mutableListOf<Review>();
+    var reviewList = mutableListOf<Review>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reviews)
-        val voyagerdiariesPref =
-            this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-        val userId = voyagerdiariesPref.getString("id", null);
-        val isAdmin = voyagerdiariesPref.getString("isAdmin", null);
+
+        // Get user ID and admin status from shared preferences
+        val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+        val userId = voyagerdiariesPref.getString("id", null)
+        val isAdmin = voyagerdiariesPref.getString("isAdmin", null)
 
         coroutineScope.launch {
+            // Retrieve the review list from the Database class
             reviewList = getReview(userId!!)
+
+            // Set up the RecyclerView
             val recyclerView = findViewById<RecyclerView>(R.id.allReviews)
             recyclerView.layoutManager = LinearLayoutManager(this@Reviews)
             val itemAdapter = ItemAdapter(reviewList, isAdmin.toString())
             recyclerView.adapter = itemAdapter
+
+            // Set item click listener for the RecyclerView
             itemAdapter.setOnItemClickListener(object : ItemAdapter.onItemClickListener {
                 override fun onItemClick(position: Int, reviewId: Int, action: String) {
                     if (action == "like") {
-                        val likebuttonHolder =
-                            recyclerView.findViewHolderForAdapterPosition(position)
-                        val likeCountItem =
-                            likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
-                        val likedbutton =
-                            likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
+                        // Perform like action
+                        val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                        val likeCountItem = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
+                        val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton)
+
                         if (likedbutton?.tag.toString() == "like") {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
-                            likedbutton?.setTag("unlike");
+                            likedbutton?.setTag("unlike")
                             val like_count = likeCountItem?.text.toString()
                             likeCountItem?.text = (like_count.toInt() + 1).toString()
                         } else {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
-                            likedbutton?.setTag("like");
+                            likedbutton?.setTag("like")
                             val like_count = likeCountItem?.text.toString()
                             likeCountItem?.text = (like_count.toInt() - 1).toString()
                         }
+
+                        // Perform like action on the review using coruotines asyncronously
                         coroutineScope.launch {
                             val liked = likeReview(userId!!, reviewId)
                         }
                     }
+
                     if (action == "reply") {
+                        // Start the ReviewReply activity to reply to a review
                         val replyReviewIntent = Intent(this@Reviews, ReviewReply::class.java)
                         replyReviewIntent.putExtra("reviewId", reviewId.toString())
                         startActivity(replyReviewIntent)
@@ -130,10 +151,10 @@ class Reviews : AppCompatActivity() {
                 }
             })
         }
-        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView);
-        navbarActions(this, nav);
 
-
+        // Set up the bottom navigation view
+        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        navbarActions(this, nav)
     }
 
     override fun onDestroy() {
@@ -141,10 +162,8 @@ class Reviews : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    private suspend fun getReview(
-        userId: String,
-        usersReview: Boolean = false
-    ): MutableList<Review> = withContext(Dispatchers.IO) {
+    // Function to retrieve reviews from the Database helper class
+    private suspend fun getReview(userId: String, usersReview: Boolean = false): MutableList<Review> = withContext(Dispatchers.IO) {
         return@withContext try {
             val db = Database(this@Reviews)
             db.getAllReview(userId)
@@ -154,16 +173,15 @@ class Reviews : AppCompatActivity() {
         }
     }
 
-    private suspend fun likeReview(userId: String, reviewId: Int): Boolean =
-        withContext(Dispatchers.IO) {
-            return@withContext try {
-                val db = Database(this@Reviews)
-                db.likeReview(userId, reviewId)
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
+    // Function to perform like action on a review
+    private suspend fun likeReview(userId: String, reviewId: Int): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val db = Database(this@Reviews)
+            db.likeReview(userId, reviewId)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
-
+    }
 }

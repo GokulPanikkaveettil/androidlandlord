@@ -86,6 +86,7 @@ class MyReviews : AppCompatActivity() {
         setContentView(R.layout.activity_my_reviews)
 
         val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView);
+        // Set up the bottom navigation view
         navbarActions(this, nav);
         val selectedItem = nav.menu.findItem(R.id.navbar_profile)
         selectedItem?.setChecked(true)
@@ -93,6 +94,7 @@ class MyReviews : AppCompatActivity() {
             val voyagerdiariesPref =
                 this@MyReviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
             val userId = voyagerdiariesPref.getString("id", null);
+            // Retrieve the user's reviews from the Database
             reviewList = getReview(userId!!)
             val recyclerView = findViewById<RecyclerView>(R.id.myReviews)
             recyclerView.layoutManager = LinearLayoutManager(this@MyReviews)
@@ -103,12 +105,16 @@ class MyReviews : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+            // configure the adapter for the RecyclerView
             val itemAdapter = MyReviewsItemAdapter(reviewList)
             recyclerView.adapter = itemAdapter
+
+            // Set item click listener for the RecyclerView
             itemAdapter.setOnItemClickListener(object : MyReviewsItemAdapter.onItemClickListener {
                 override fun onItemClick(position: Int, reviewId: Int, action: String) {
                     val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                     val likeCountItem = buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
+                    //Like  review asynchronously
                     if (action == "like") {
                         val likedbutton =
                             buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
@@ -116,6 +122,8 @@ class MyReviews : AppCompatActivity() {
                             likeReview(userId, reviewId)
                         }
 
+
+                        // Update the like button image and count based on the current state
                         if (likedbutton?.tag.toString() == "like") {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
                             likedbutton?.setTag("unlike");
@@ -128,6 +136,7 @@ class MyReviews : AppCompatActivity() {
                             likeCountItem?.text = (like_count.toInt() - 1).toString()
                         }
                     } else if (action == "delete") {
+                        // Delete the review asynchronously
                         coroutineScope.launch {
                             deleteReview(reviewId)
                             reviewList.removeAt(position)
@@ -136,6 +145,7 @@ class MyReviews : AppCompatActivity() {
                     } else if (action == "edit") {
                         val reviewText =
                             buttonHolder?.itemView?.findViewById<TextView>(R.id.reviewText)
+                        // Start the EditReview activity to edit the review
                         val editReviewIntent = Intent(this@MyReviews, EditReview::class.java)
                         editReviewIntent.putExtra("review", reviewText?.text.toString())
                         editReviewIntent.putExtra("reviewId", reviewId.toString())

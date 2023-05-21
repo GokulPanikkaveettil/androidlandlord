@@ -12,6 +12,7 @@
         android:background="@drawable/edit_text_border"
         android:hint="Share details of your experience"
         android:paddingStart="16dp"
+        android:maxLength="2500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

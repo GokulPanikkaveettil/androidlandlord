@@ -33,7 +33,7 @@
             android:label="Profile" />
         <activity
             android:name=".MainActivity"
-            android:label="Login"
+            android:label="Voyager Diaries"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

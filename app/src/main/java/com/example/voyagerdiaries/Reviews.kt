@@ -5,15 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.*
 import org.postgresql.util.PSQLException
 import java.sql.Connection
@@ -95,11 +99,44 @@ class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : Recy
 class Reviews : AppCompatActivity() {
     var reviewList = mutableListOf<Review>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reviews)
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout);
+        toggle = ActionBarDrawerToggle(this@Reviews, drawerLayout, R.string.open, R.string.close)
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true);
+        val navView = findViewById<NavigationView>(R.id.navView);
 
+        navView.setNavigationItemSelectedListener {
+            when (it.itemId){
+                R.id.myprofile-> {
+                    val mainIntent = Intent(this@Reviews, Profile::class.java)
+                    startActivity(mainIntent)
+                }
+                R.id.add_review_sidemenu-> {
+                    val mainIntent = Intent(this@Reviews, CreateReviews::class.java)
+                    startActivity(mainIntent)
+                }
+                R.id.logout_sidemenu-> {
+                    val voyagerdiariesPref =
+                        this@Reviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+                    val editor = voyagerdiariesPref.edit()
+                    editor.remove("id")
+                    editor.remove("firstName")
+                    editor.remove("lastName")
+                    editor.remove("userName")
+                    editor.apply()
+                    val mainIntent = Intent(this@Reviews, MainActivity::class.java)
+                    mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(mainIntent)
+                }
+            }
+            true
+        }
         // Get user ID and admin status from shared preferences
         val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null)
@@ -183,5 +220,12 @@ class Reviews : AppCompatActivity() {
             e.printStackTrace()
             false
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(toggle.onOptionsItemSelected(item)){
+            true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

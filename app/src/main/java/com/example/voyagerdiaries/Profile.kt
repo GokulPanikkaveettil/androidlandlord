@@ -16,7 +16,7 @@ class Profile : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayoutActivityProfile)
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         toggle = ActionBarDrawerToggle(this@Profile, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -34,7 +34,7 @@ class Profile : AppCompatActivity() {
 
 
 
-        val navView = findViewById<NavigationView>(R.id.navViewProfile);
+        val navView = findViewById<NavigationView>(R.id.navView);
 
         navView.setNavigationItemSelectedListener {
             when (it.itemId){

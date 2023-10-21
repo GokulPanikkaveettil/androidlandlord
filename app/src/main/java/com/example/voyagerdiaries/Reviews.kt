@@ -87,8 +87,6 @@ class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : Recy
         if (isAdmin == "f") {
             holder.replyButton.visibility = View.GONE
         }
-        println("liked"+review.liked.toString())
-        println("disliked"+review.disliked.toString())
 
         // Based on the review's liked status, set the like button's image and tag.
         if (review.liked == 1) {

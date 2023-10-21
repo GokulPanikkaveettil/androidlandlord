@@ -26,6 +26,8 @@ class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemCl
     val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
     val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton);
     val editButton: ImageView = itemView.findViewById(R.id.editButton);
+    val dislikeCount: TextView = itemView.findViewById(R.id.dislike_count);
+    val dislikeButton: ImageView = itemView.findViewById(R.id.dislikeButton);
 
     init {
         likeButton.setOnClickListener {
@@ -36,6 +38,9 @@ class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemCl
         }
         editButton.setOnClickListener {
             listener.onItemClick(adapterPosition, reviewId, "edit")
+        }
+        dislikeButton.setOnClickListener {
+            listener.onItemClick(adapterPosition, reviewId, "dislike")
         }
     }
 }
@@ -64,6 +69,7 @@ class MyReviewsItemAdapter(private val reviews: List<Review>) :
         holder.reviewId = review.reviewId
         holder.likeCount.text = review.likeCount.toString()
         holder.adminReply.text = "by Admin:" + review.adminReply.toString()
+        holder.dislikeCount.text = review.dislikeCount.toString()
         if(review.adminReply!!.isBlank()){
             holder.adminReply.visibility = View.GONE
         }
@@ -72,6 +78,13 @@ class MyReviewsItemAdapter(private val reviews: List<Review>) :
             holder.likeButton.setTag("unlike")
         } else {
             holder.likeButton.setTag("like")
+        }
+
+        if (review.disliked == 1) {
+            holder.dislikeButton.setImageResource(R.drawable.baseline_thumb_down_24)
+            holder.dislikeButton.setTag("undislike")
+        } else {
+            holder.dislikeButton.setTag("dislike")
         }
     }
 
@@ -147,6 +160,30 @@ class MyReviews : AppCompatActivity() {
                         editReviewIntent.putExtra("reviewId", reviewId.toString())
                         startActivity(editReviewIntent)
                     }
+
+                    else if (action == "dislike") {
+                        // Perform like action
+                        val dislikebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                        val dislikeCountItem = dislikebuttonHolder?.itemView?.findViewById<TextView>(R.id.dislike_count)
+                        val dislikedbutton = dislikebuttonHolder?.itemView?.findViewById<ImageView>(R.id.dislikeButton)
+
+                        if (dislikedbutton?.tag.toString() == "dislike") {
+                            dislikedbutton?.setImageResource(R.drawable.baseline_thumb_down_24)
+                            dislikedbutton?.setTag("undislike")
+                            val dislike_count = dislikeCountItem?.text.toString()
+                            dislikeCountItem?.text = (dislike_count.toInt() + 1).toString()
+                        } else {
+                            dislikedbutton?.setImageResource(R.drawable.baseline_thumb_down_off_alt_24)
+                            dislikedbutton?.setTag("dislike")
+                            val dislike_count = dislikeCountItem?.text.toString()
+                            dislikeCountItem?.text = (dislike_count.toInt() - 1).toString()
+                        }
+
+                        // Perform dislike action on the review using coruotines asyncronously
+                        coroutineScope.launch {
+                            val disliked = dislikeReview(userId!!, reviewId)
+                        }
+                    }
                 }
 
             })
@@ -168,6 +205,18 @@ class MyReviews : AppCompatActivity() {
             false
         }
     }
+
+    private suspend fun dislikeReview(userId: String, reviewId: Int): Boolean =
+        withContext(Dispatchers.IO) {
+            return@withContext try {
+                val db = Database(this@MyReviews)
+                db.dislikeReview(userId, reviewId)
+                true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
 
     private suspend fun likeReview(userId: String, reviewId: Int): Boolean =
         withContext(Dispatchers.IO) {

@@ -186,6 +186,7 @@ class Database(context: Context) {
         and return a mutable list of Review object
          */
         val reviewList = mutableListOf<Review>();
+        val reviewidList = mutableListOf<Int>()
         var query =
             "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id where b.is_active=TRUE order by a.id desc;";
         if (userId!!.isNotEmpty()) {
@@ -203,26 +204,26 @@ class Database(context: Context) {
                 query = query.replace("WHERE u.is_active=TRUE", "WHERE u.is_active=TRUE and r.user_id=$userId ")
             }
         }
-        println(query)
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
             while (resultSet?.next() == true) {
-                println(resultSet.getInt("disliked"))
-                println(resultSet.getInt("id"))
-                reviewList.add(
-                    Review(
-                        resultSet.getString("review"),
-                        resultSet.getString("username"),
-                        resultSet.getInt("id"),
-                        resultSet.getInt("liked"),
-                        resultSet.getInt("like_count"),
-                        resultSet.getString("admin_reply"),
-                        resultSet.getInt("dislike_count"),
-                        resultSet.getInt("disliked"),
+                if(resultSet.getInt("id") !in reviewidList) {
+                    reviewList.add(
+                        Review(
+                            resultSet.getString("review"),
+                            resultSet.getString("username"),
+                            resultSet.getInt("id"),
+                            resultSet.getInt("liked"),
+                            resultSet.getInt("like_count"),
+                            resultSet.getString("admin_reply"),
+                            resultSet.getInt("dislike_count"),
+                            resultSet.getInt("disliked"),
 
+                            )
                     )
-                )
+                    reviewidList.add(resultSet.getInt("id"))
+                }
             }
             connection?.close()
         } catch (e: Exception) {

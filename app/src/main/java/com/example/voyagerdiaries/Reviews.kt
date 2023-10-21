@@ -24,20 +24,26 @@ import java.sql.DriverManager
 import kotlinx.coroutines.withContext
 
 
-    data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int, val likeCount: Int, val adminReply: String?)
+    data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int, val likeCount: Int, val adminReply: String?, val dislikeCount: Int, val disliked: Int)
 
 class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener) :
     RecyclerView.ViewHolder(itemView) {
     val reviewText: TextView = itemView.findViewById(R.id.reviewText);
     val userName: TextView = itemView.findViewById(R.id.reviewedUser);
     val likeCount: TextView = itemView.findViewById(R.id.like_count);
+    val dislikeCount: TextView = itemView.findViewById(R.id.dislike_count);
     var reviewId: Int = 0;
     val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
+    val dislikeButton: ImageView = itemView.findViewById(R.id.dislikeButton);
     val replyButton: ImageView = itemView.findViewById(R.id.reply);
 
     init {
         likeButton.setOnClickListener {
             listener.onItemClick(adapterPosition, reviewId, "like")
+        }
+
+        dislikeButton.setOnClickListener {
+            listener.onItemClick(adapterPosition, reviewId, "dislike")
         }
 
         replyButton.setOnClickListener {
@@ -75,11 +81,14 @@ class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : Recy
         holder.userName.text = review.fullName
         holder.reviewId = review.reviewId
         holder.likeCount.text = review.likeCount.toString()
+        holder.dislikeCount.text = review.dislikeCount.toString()
 
         // If the user is not an admin, check and hide the respond button.
         if (isAdmin == "f") {
             holder.replyButton.visibility = View.GONE
         }
+        println("liked"+review.liked.toString())
+        println("disliked"+review.disliked.toString())
 
         // Based on the review's liked status, set the like button's image and tag.
         if (review.liked == 1) {
@@ -87,6 +96,12 @@ class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : Recy
             holder.likeButton.setTag("unlike")
         } else {
             holder.likeButton.setTag("like")
+        }
+        if (review.disliked == 1) {
+            holder.dislikeButton.setImageResource(R.drawable.baseline_thumb_down_24)
+            holder.dislikeButton.setTag("undislike")
+        } else {
+            holder.dislikeButton.setTag("dislike")
         }
     }
 
@@ -114,6 +129,10 @@ class Reviews : AppCompatActivity() {
             when (it.itemId){
                 R.id.myprofile-> {
                     val mainIntent = Intent(this@Reviews, Profile::class.java)
+                    startActivity(mainIntent)
+                }
+                R.id.home-> {
+                    val mainIntent = Intent(this@Reviews, Reviews::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_review_sidemenu-> {
@@ -178,6 +197,30 @@ class Reviews : AppCompatActivity() {
                         }
                     }
 
+                    if (action == "dislike") {
+                        // Perform like action
+                        val dislikebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                        val dislikeCountItem = dislikebuttonHolder?.itemView?.findViewById<TextView>(R.id.dislike_count)
+                        val dislikedbutton = dislikebuttonHolder?.itemView?.findViewById<ImageView>(R.id.dislikeButton)
+
+                        if (dislikedbutton?.tag.toString() == "dislike") {
+                            dislikedbutton?.setImageResource(R.drawable.baseline_thumb_down_24)
+                            dislikedbutton?.setTag("undislike")
+                            val dislike_count = dislikeCountItem?.text.toString()
+                            dislikeCountItem?.text = (dislike_count.toInt() + 1).toString()
+                        } else {
+                            dislikedbutton?.setImageResource(R.drawable.baseline_thumb_down_off_alt_24)
+                            dislikedbutton?.setTag("dislike")
+                            val dislike_count = dislikeCountItem?.text.toString()
+                            dislikeCountItem?.text = (dislike_count.toInt() - 1).toString()
+                        }
+
+                        // Perform dislike action on the review using coruotines asyncronously
+                        coroutineScope.launch {
+                            val disliked = dislikeReview(userId!!, reviewId)
+                        }
+                    }
+
                     if (action == "reply") {
                         // Start the ReviewReply activity to reply to a review
                         val replyReviewIntent = Intent(this@Reviews, ReviewReply::class.java)
@@ -212,6 +255,18 @@ class Reviews : AppCompatActivity() {
         return@withContext try {
             val db = Database(this@Reviews)
             db.likeReview(userId, reviewId)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    // Function to perform dislike action on a review
+    private suspend fun dislikeReview(userId: String, reviewId: Int): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val db = Database(this@Reviews)
+            db.dislikeReview(userId, reviewId)
             true
         } catch (e: Exception) {
             e.printStackTrace()

@@ -37,6 +37,18 @@
             android:textSize="14sp" />
 
         <ImageView
+            android:id="@+id/dislikeButton"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/baseline_thumb_down_off_alt_24" />
+        <TextView
+            android:id="@+id/dislike_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp" />
+
+        <ImageView
             android:id="@+id/reply"
             android:layout_width="45dp"
             android:layout_weight="2"

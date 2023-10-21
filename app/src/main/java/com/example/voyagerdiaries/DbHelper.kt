@@ -190,15 +190,26 @@ class Database(context: Context) {
             "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id where b.is_active=TRUE order by a.id desc;";
         if (userId!!.isNotEmpty()) {
             query =
-                "SELECT r.review, u.username, r.id, CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked,like_count,admin_reply FROM reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId JOIN users u ON r.user_id = u.id WHERE u.is_active=TRUE ORDER BY r.id DESC; "
+                "SELECT r.review, u.username, r.id,\n" +
+                        "CASE WHEN l.user_id IS NULL THEN 0\n" +
+                        "ELSE 1 END AS liked,case when d.user_id is null then 0\n" +
+                        "else 1 end as disliked,\n" +
+                        "like_count,admin_reply,dislike_count FROM\n" +
+                        "        reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId\n" +
+                        "LEFT JOIN\n" +
+                        "        disliked_reviews d ON d.review_id = r.id AND d.user_id = $userId\n" +
+                        "JOIN users u ON r.user_id = u.id WHERE u.is_active=TRUE ORDER BY r.id DESC; "
             if (usersReview) {
                 query = query.replace("WHERE u.is_active=TRUE", "WHERE u.is_active=TRUE and r.user_id=$userId ")
             }
         }
+        println(query)
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
             while (resultSet?.next() == true) {
+                println(resultSet.getInt("disliked"))
+                println(resultSet.getInt("id"))
                 reviewList.add(
                     Review(
                         resultSet.getString("review"),
@@ -206,7 +217,9 @@ class Database(context: Context) {
                         resultSet.getInt("id"),
                         resultSet.getInt("liked"),
                         resultSet.getInt("like_count"),
-                        resultSet.getString("admin_reply")
+                        resultSet.getString("admin_reply"),
+                        resultSet.getInt("dislike_count"),
+                        resultSet.getInt("disliked"),
 
                     )
                 )
@@ -249,6 +262,34 @@ class Database(context: Context) {
         }
         return likedReview
     }
+
+    fun dislikeReview(userId: String, reviewId: Int): Boolean {
+        var dislikedReview = false
+        val statement = connection?.createStatement()
+
+        try {
+            val query = "INSERT INTO disliked_reviews (user_id, review_id) VALUES ($userId, $reviewId) RETURNING id"
+            val resultSet = statement?.executeQuery(query)
+            statement?.execute("UPDATE reviews SET dislike_count = dislike_count + 1 WHERE id = $reviewId RETURNING dislike_count")
+            dislikedReview = true
+            statement?.close()
+        } catch (e: PSQLException) {
+            if (e.message.toString().contains("duplicate key value violates unique constraint")) {
+                val deleteQuery = "DELETE FROM disliked_reviews WHERE user_id = $userId AND review_id = $reviewId RETURNING id"
+                statement?.execute(deleteQuery)
+                statement?.execute("UPDATE reviews SET dislike_count = dislike_count - 1 WHERE id = $reviewId RETURNING dislike_count")
+                dislikedReview = true
+                statement?.close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            connection?.close()
+        }
+
+        return dislikedReview
+    }
+
 
     fun deleteReview(reviewId: Int): Boolean {
         /*

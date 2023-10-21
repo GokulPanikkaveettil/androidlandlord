@@ -42,6 +42,10 @@ class Profile : AppCompatActivity() {
                     val mainIntent = Intent(this@Profile, Profile::class.java)
                     startActivity(mainIntent)
                 }
+                R.id.home-> {
+                    val mainIntent = Intent(this@Profile, Reviews::class.java)
+                    startActivity(mainIntent)
+                }
                 R.id.add_review_sidemenu-> {
                     val mainIntent = Intent(this@Profile, CreateReviews::class.java)
                     startActivity(mainIntent)

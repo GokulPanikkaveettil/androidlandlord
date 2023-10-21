@@ -39,5 +39,5 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-    <include layout="@layout/bottom_navigation" />
+    <include layout="@layout/sidebar_navigation" />
 </androidx.drawerlayout.widget.DrawerLayout>

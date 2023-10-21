@@ -21,10 +21,7 @@ class EditReview : AppCompatActivity() {
         val reviewId = intent.getStringExtra("reviewId")
         val editReview = findViewById<EditText>(R.id.editTextPostReviews)
         editReview.setText(review)
-        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        val selectedItem = nav.menu.findItem(R.id.navbar_profile)
-        selectedItem?.setChecked(true)
-        navbarActions(this, nav);
+
         val postReviewButton = findViewById<Button>(R.id.postReview);
         postReviewButton.setOnClickListener {
             if (editReview.text.isBlank() == true) {

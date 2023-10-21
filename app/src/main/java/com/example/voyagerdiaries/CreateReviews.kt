@@ -19,10 +19,6 @@ class CreateReviews : AppCompatActivity() {
 
         val reviewText = findViewById<EditText>(R.id.editTextPostReviews);
         val postReviewButton = findViewById<Button>(R.id.postReview);
-        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        navbarActions(this, nav);
-        val selectedItem = nav.menu.findItem(R.id.add_review)
-        selectedItem?.setChecked(true)
         /*
         when postreview button is clicked we check the review text if empty
         and then feed to database class function addReview via coroutine.

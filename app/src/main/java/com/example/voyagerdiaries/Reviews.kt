@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.*
 import org.postgresql.util.PSQLException
@@ -189,9 +188,7 @@ class Reviews : AppCompatActivity() {
             })
         }
 
-        // Set up the bottom navigation view
-        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        navbarActions(this, nav)
+
     }
 
     override fun onDestroy() {

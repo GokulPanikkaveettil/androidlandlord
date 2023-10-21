@@ -85,11 +85,7 @@ class MyReviews : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_reviews)
 
-        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView);
         // Set up the bottom navigation view
-        navbarActions(this, nav);
-        val selectedItem = nav.menu.findItem(R.id.navbar_profile)
-        selectedItem?.setChecked(true)
         coroutineScope.launch {
             val voyagerdiariesPref =
                 this@MyReviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)

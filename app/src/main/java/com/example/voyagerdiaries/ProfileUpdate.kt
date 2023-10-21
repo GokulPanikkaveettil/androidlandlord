@@ -19,10 +19,6 @@ class ProfileUpdate : AppCompatActivity() {
 
         val updateFirstName = findViewById<EditText>(R.id.editTextUpdateFirstName);
         val updateLastName = findViewById<EditText>(R.id.editTextUpdateLastName);
-        val nav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        val selectedItem = nav.menu.findItem(R.id.navbar_profile)
-        selectedItem?.setChecked(true)
-        navbarActions(this, nav);
 
         val voyagerdiariesPref =
             this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)

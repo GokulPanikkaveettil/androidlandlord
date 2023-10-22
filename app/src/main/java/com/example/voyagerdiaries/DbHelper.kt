@@ -11,9 +11,9 @@ import java.sql.DriverManager
 
 class Database(context: Context) {
     private var connection: Connection? = null
-    private val user = "zjcjmmse"
-    private val pass = "gp_LDmHthXvylqUAbb2S2okzyHYDLZj-"
-    private var url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
+    private val user = "evzzmdmf"
+    private val pass = "7o2lozRro7K0ZoqJMaewYvWO2XPC-kMQ"
+    private var url = "jdbc:postgresql://snuffleupagus.db.elephantsql.com:5432/evzzmdmf"
     private var status = false
     private var context: Context = context
 
@@ -65,6 +65,49 @@ class Database(context: Context) {
             connection?.close()
         }
         return userAdded
+    }
+
+    fun checkAndCreateTables(): Boolean{
+        /*
+        when MainActivity is looded we check if tables exists, if tables exists
+        we do nothing if does not exist we create tables.
+         */
+        try {
+            val statement = connection?.createStatement();
+            val query = "SELECT table_name\n" +
+                    "FROM information_schema.tables\n" +
+                    "WHERE table_name = 'users'\n" +
+                    "  AND table_schema = 'public';"
+            val resultSet = statement?.executeQuery(query);
+            var tableName = "";
+            if (resultSet?.next() == true) {
+                tableName = resultSet.getString("table_name")
+            }
+            if(tableName == ""){
+                println("table does not exist")
+                val usertablequery = "CREATE TABLE users ( id serial PRIMARY KEY, first_name character varying(50) NOT NULL, last_name character varying(50), username character varying(50) NOT NULL, password character varying(50) NOT NULL, is_active boolean DEFAULT true, is_admin boolean DEFAULT false, gender character varying(20) );"
+                statement?.executeUpdate(usertablequery);
+                statement?.executeUpdate("ALTER TABLE users ADD CONSTRAINT users_username_key UNIQUE (username);")
+                statement?.executeQuery("insert into users values (1, 'admin', 'admin', 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', true, true, 'Male') returning id;")
+                val reviewTable = "CREATE TABLE reviews ( id serial PRIMARY KEY, user_id integer NOT NULL, review text NOT NULL, like_count integer DEFAULT 0, admin_reply character varying(255) DEFAULT '', dislike_count integer DEFAULT 0 );"
+                statement?.executeUpdate(reviewTable);
+                statement?.executeUpdate("ALTER TABLE reviews ADD CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);")
+                val likeReviewsTable = "CREATE TABLE liked_reviews ( id serial PRIMARY KEY, user_id integer NOT NULL, review_id integer NOT NULL );"
+                statement?.executeUpdate(likeReviewsTable);
+                statement?.executeUpdate("ALTER TABLE liked_reviews ADD CONSTRAINT unique_user_review UNIQUE (user_id, review_id);")
+                val dislikeReviewsTable = "CREATE TABLE disliked_reviews ( id serial PRIMARY KEY, user_id integer NOT NULL, review_id integer NOT NULL );"
+                statement?.executeUpdate(dislikeReviewsTable);
+                statement?.executeUpdate("ALTER TABLE disliked_reviews ADD CONSTRAINT unique_user_review_dislike UNIQUE (user_id, review_id);")
+
+
+
+            }else{
+                println("table exist")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return true
     }
 
 

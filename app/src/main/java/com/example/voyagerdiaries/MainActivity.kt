@@ -15,6 +15,14 @@ class MainActivity : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        coroutineScope.launch {
+            /*
+            first we create a tables after onCreate is called
+            and admin is created along with it
+             */
+            checkAndCreateTables()
+        }
         val voyagerdiariesPref =
             this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         // Retrieve user ID from shared preferences
@@ -68,5 +76,11 @@ class MainActivity : AppCompatActivity() {
         withContext(Dispatchers.IO) {
             val db = Database(this@MainActivity)
             db.authenticateUser(userName, password)
+        }
+
+    private suspend fun checkAndCreateTables(): Boolean =
+        withContext(Dispatchers.IO) {
+            val db = Database(this@MainActivity)
+            db.checkAndCreateTables()
         }
 }

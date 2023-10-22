@@ -11,9 +11,9 @@ import java.sql.DriverManager
 
 class Database(context: Context) {
     private var connection: Connection? = null
-    private val user = "evzzmdmf"
-    private val pass = "7o2lozRro7K0ZoqJMaewYvWO2XPC-kMQ"
-    private var url = "jdbc:postgresql://snuffleupagus.db.elephantsql.com:5432/evzzmdmf"
+    private val user = "zjcjmmse"
+    private val pass = "gp_LDmHthXvylqUAbb2S2okzyHYDLZj-"
+    private var url = "jdbc:postgresql://isilo.db.elephantsql.com:5432/zjcjmmse"
     private var status = false
     private var context: Context = context
 

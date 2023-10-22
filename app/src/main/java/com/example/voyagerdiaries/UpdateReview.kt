@@ -7,11 +7,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.*
 
 
-class EditReview : AppCompatActivity() {
+class UpdateReview : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -49,7 +48,7 @@ class EditReview : AppCompatActivity() {
         Dispatchers.IO
     ) {
         return@withContext try {
-            val db = Database(this@EditReview)
+            val db = Database(this@UpdateReview)
             db.editReview(reviewId, review)
             true
         } catch (e: Exception) {

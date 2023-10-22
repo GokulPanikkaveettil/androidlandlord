@@ -13,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.*
 
 class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemClickListener) :
@@ -155,7 +154,7 @@ class MyReviews : AppCompatActivity() {
                         val reviewText =
                             buttonHolder?.itemView?.findViewById<TextView>(R.id.reviewText)
                         // Start the EditReview activity to edit the review
-                        val editReviewIntent = Intent(this@MyReviews, EditReview::class.java)
+                        val editReviewIntent = Intent(this@MyReviews, UpdateReview::class.java)
                         editReviewIntent.putExtra("review", reviewText?.text.toString())
                         editReviewIntent.putExtra("reviewId", reviewId.toString())
                         startActivity(editReviewIntent)

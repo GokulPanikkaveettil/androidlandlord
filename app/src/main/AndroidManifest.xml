@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignUp"
+            android:name=".UserRegister"
             android:label="Sign Up" />
         <activity
             android:name=".Reviews"
@@ -51,7 +51,7 @@
             android:name=".CreateReviews"
             android:label="Post Reviews" />
         <activity
-            android:name=".EditReview"
+            android:name=".UpdateReview"
             android:label="Edit Review" />
     </application>
 

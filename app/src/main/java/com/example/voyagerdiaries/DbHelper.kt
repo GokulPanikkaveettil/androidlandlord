@@ -41,7 +41,8 @@ class Database(context: Context) {
         firstName: String,
         lastName: String,
         userName: String,
-        password: String
+        password: String,
+        gender: String
     ): Boolean {
         var userAdded = false;
         /*every password should be encrypted using any hashing algorithm
@@ -51,7 +52,7 @@ class Database(context: Context) {
         val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray())
             .joinToString("") { "%02x".format(it) }
         val query =
-            "INSERT INTO users (first_name, last_name, username, password) values ('$firstName', '$lastName', '$userName', '$encryptedPassword') returning id"
+            "INSERT INTO users (first_name, last_name, username, password, gender) values ('$firstName', '$lastName', '$userName', '$encryptedPassword', '$gender') returning id"
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);

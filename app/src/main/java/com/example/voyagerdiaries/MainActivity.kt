@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
             this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         // Retrieve user ID from shared preferences
         val userId = voyagerdiariesPref.getString("id", null);
-        // If user ID exists, start Reviews.kt activity
+        // If user ID exists, start AllReviews.kt activity
         if (userId != null) {
             val intentMainActivity = Intent(this, Reviews::class.java)
             startActivity(intentMainActivity)
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         val buttonLogin = findViewById<Button>(R.id.login);
         // Button click listener for Signup button
         buttonSignup.setOnClickListener {
-            val intent = Intent(this, SignUp::class.java)
+            val intent = Intent(this, UserRegister::class.java)
             startActivity(intent)
         }
         // Button click listener for Login button
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                     authenticate(userName.text.toString().trim(), password.text.toString().trim())
                 if (checkAuthentication) {
                     startActivity(intent)
-                    // If authentication is successful, start Reviews.kt activity and show success toast message
+                    // If authentication is successful, start AllReviews.kt activity and show success toast message
                     Toast.makeText(
                         this@MainActivity,
                         "Authentication successful....",

@@ -21,34 +21,15 @@ import kotlinx.coroutines.withContext
 
 
     data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int, val likeCount: Int, val adminReply: String?, val dislikeCount: Int, val disliked: Int)
-
+    data class Property(val id: Int, val name: String, val user_id: Int, val description: String, val price: Int);
 class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener) :
     RecyclerView.ViewHolder(itemView) {
-    val reviewText: TextView = itemView.findViewById(R.id.reviewText);
-    val userName: TextView = itemView.findViewById(R.id.reviewedUser);
-    val likeCount: TextView = itemView.findViewById(R.id.like_count);
-    val dislikeCount: TextView = itemView.findViewById(R.id.dislike_count);
-    var reviewId: Int = 0;
-    val likeButton: ImageView = itemView.findViewById(R.id.likeButton);
-    val dislikeButton: ImageView = itemView.findViewById(R.id.dislikeButton);
-    val replyButton: ImageView = itemView.findViewById(R.id.reply);
-
-    init {
-        likeButton.setOnClickListener {
-            listener.onItemClick(adapterPosition, reviewId, "like")
-        }
-
-        dislikeButton.setOnClickListener {
-            listener.onItemClick(adapterPosition, reviewId, "dislike")
-        }
-
-        replyButton.setOnClickListener {
-            listener.onItemClick(adapterPosition, reviewId, "reply")
-        }
-    }
+    val name: TextView = itemView.findViewById(R.id.name);
+    val description: TextView = itemView.findViewById(R.id.description);
+    val price: TextView = itemView.findViewById(R.id.price);
 }
 
-class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : RecyclerView.Adapter<ReviewViewHolder>() {
+class ItemAdapter(private val reviews: List<Property>, val isAdmin: String) : RecyclerView.Adapter<ReviewViewHolder>() {
     private lateinit var holderListener: onItemClickListener
 
     // Create the item's view holder.
@@ -73,30 +54,9 @@ class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : Recy
         val review = reviews[position]
 
         // Set the review text and user name
-        holder.reviewText.text = review.review
-        holder.userName.text = review.fullName
-        holder.reviewId = review.reviewId
-        holder.likeCount.text = review.likeCount.toString()
-        holder.dislikeCount.text = review.dislikeCount.toString()
-
-        // If the user is not an admin, check and hide the respond button.
-        if (isAdmin == "f") {
-            holder.replyButton.visibility = View.GONE
-        }
-
-        // Based on the review's liked status, set the like button's image and tag.
-        if (review.liked == 1) {
-            holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_24)
-            holder.likeButton.setTag("unlike")
-        } else {
-            holder.likeButton.setTag("like")
-        }
-        if (review.disliked == 1) {
-            holder.dislikeButton.setImageResource(R.drawable.baseline_thumb_down_24)
-            holder.dislikeButton.setTag("undislike")
-        } else {
-            holder.dislikeButton.setTag("dislike")
-        }
+        holder.name.text = review.name
+        holder.description.text = review.description
+        holder.price.text = "price: £" + review.price.toString()
     }
 
     override fun getItemCount(): Int = reviews.size
@@ -105,7 +65,7 @@ class ItemAdapter(private val reviews: List<Review>, val isAdmin: String) : Recy
 
 
 class Reviews : AppCompatActivity() {
-    var reviewList = mutableListOf<Review>()
+    var propertyList = mutableListOf<Property>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     lateinit var toggle: ActionBarDrawerToggle
 
@@ -123,6 +83,10 @@ class Reviews : AppCompatActivity() {
             when (it.itemId){
                 R.id.myprofile-> {
                     val mainIntent = Intent(this@Reviews, Profile::class.java)
+                    startActivity(mainIntent)
+                }
+                R.id.add_landlord-> {
+                    val mainIntent = Intent(this@Reviews, AddLandlord::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {
@@ -156,42 +120,52 @@ class Reviews : AppCompatActivity() {
 
         coroutineScope.launch {
             // Retrieve the review list from the Database class
-            reviewList = getReview(userId!!)
+            propertyList = getReview(userId!!)
 
             // Set up the RecyclerView
             val recyclerView = findViewById<RecyclerView>(R.id.allReviews)
             recyclerView.layoutManager = LinearLayoutManager(this@Reviews)
-            val itemAdapter = ItemAdapter(reviewList, isAdmin.toString())
+            val itemAdapter = ItemAdapter(propertyList, isAdmin.toString())
             recyclerView.adapter = itemAdapter
 
             // Set item click listener for the RecyclerView
             itemAdapter.setOnItemClickListener(object : ItemAdapter.onItemClickListener {
                 override fun onItemClick(position: Int, reviewId: Int, action: String) {
+                    val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
+                    val likeCountItem = buttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
+                    //Like  review asynchronously
                     if (action == "like") {
-                        // Perform like action
-                        val likebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                        val likeCountItem = likebuttonHolder?.itemView?.findViewById<TextView>(R.id.like_count)
-                        val likedbutton = likebuttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton)
+                        val likedbutton =
+                            buttonHolder?.itemView?.findViewById<ImageView>(R.id.likeButton);
+                        coroutineScope.launch {
+                            likeReview(userId, reviewId)
+                        }
 
+
+                        // Update the like button image and count based on the current state
                         if (likedbutton?.tag.toString() == "like") {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_24)
-                            likedbutton?.setTag("unlike")
+                            likedbutton?.setTag("unlike");
                             val like_count = likeCountItem?.text.toString()
                             likeCountItem?.text = (like_count.toInt() + 1).toString()
                         } else {
                             likedbutton?.setImageResource(R.drawable.baseline_thumb_up_off_alt_24)
-                            likedbutton?.setTag("like")
+                            likedbutton?.setTag("like");
                             val like_count = likeCountItem?.text.toString()
                             likeCountItem?.text = (like_count.toInt() - 1).toString()
                         }
-
-                        // Perform like action on the review using coruotines asyncronously
-                        coroutineScope.launch {
-                            val liked = likeReview(userId!!, reviewId)
-                        }
+                    }
+                    else if (action == "edit") {
+                        val reviewText =
+                            buttonHolder?.itemView?.findViewById<TextView>(R.id.reviewText)
+                        // Start the EditReview activity to edit the review
+                        val editReviewIntent = Intent(this@Reviews, UpdateReview::class.java)
+                        editReviewIntent.putExtra("review", reviewText?.text.toString())
+                        editReviewIntent.putExtra("reviewId", reviewId.toString())
+                        startActivity(editReviewIntent)
                     }
 
-                    if (action == "dislike") {
+                    else if (action == "dislike") {
                         // Perform like action
                         val dislikebuttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                         val dislikeCountItem = dislikebuttonHolder?.itemView?.findViewById<TextView>(R.id.dislike_count)
@@ -214,15 +188,10 @@ class Reviews : AppCompatActivity() {
                             val disliked = dislikeReview(userId!!, reviewId)
                         }
                     }
-
-                    if (action == "reply") {
-                        // Start the ReviewReply activity to reply to a review
-                        val replyReviewIntent = Intent(this@Reviews, ReviewReply::class.java)
-                        replyReviewIntent.putExtra("reviewId", reviewId.toString())
-                        startActivity(replyReviewIntent)
-                    }
                 }
+
             })
+
         }
 
 
@@ -234,13 +203,13 @@ class Reviews : AppCompatActivity() {
     }
 
     // Function to retrieve reviews from the Database helper class
-    private suspend fun getReview(userId: String, usersReview: Boolean = false): MutableList<Review> = withContext(Dispatchers.IO) {
+    private suspend fun getReview(userId: String, usersReview: Boolean = false): MutableList<Property> = withContext(Dispatchers.IO) {
         return@withContext try {
             val db = Database(this@Reviews)
-            db.getAllReview(userId)
+            db.getAllProperty(userId)
         } catch (e: Exception) {
             e.printStackTrace()
-            reviewList
+            propertyList
         }
     }
 

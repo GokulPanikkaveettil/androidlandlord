@@ -237,7 +237,8 @@ class MyReviews : AppCompatActivity() {
     ) {
         return@withContext try {
             val db = Database(this@MyReviews)
-            db.getAllReview(userId, usersReview)
+//            db.getAllReview(userId, usersReview)
+            reviewList
         } catch (e: Exception) {
             e.printStackTrace()
             reviewList

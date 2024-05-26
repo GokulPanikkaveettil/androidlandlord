@@ -1,4 +1,5 @@
 import android.content.Context
+import com.example.voyagerdiaries.Property
 import com.example.voyagerdiaries.Review
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -226,56 +227,37 @@ class Database(context: Context) {
         }
     }
 
-    fun getAllReview(userId: String? = null, usersReview: Boolean = false): MutableList<Review> {
+    fun getAllProperty(userId: String? = null, usersReview: Boolean = false): MutableList<Property> {
         /*
-        here we call review,username,id liked and like_count using join queries
-        and return a mutable list of Review object
+        here we call id, name, user_id, description, price
          */
-        val reviewList = mutableListOf<Review>();
-        val reviewidList = mutableListOf<Int>()
-        var query =
-            "select a.review,b.username,a.id from reviews a join users b on a.user_id=b.id where b.is_active=TRUE order by a.id desc;";
-        if (userId!!.isNotEmpty()) {
-            query =
-                "SELECT r.review, u.username, r.id,\n" +
-                        "CASE WHEN l.user_id IS NULL THEN 0\n" +
-                        "ELSE 1 END AS liked,case when d.user_id is null then 0\n" +
-                        "else 1 end as disliked,\n" +
-                        "like_count,admin_reply,dislike_count FROM\n" +
-                        "        reviews r LEFT JOIN liked_reviews l ON l.review_id = r.id AND l.user_id = $userId\n" +
-                        "LEFT JOIN\n" +
-                        "        disliked_reviews d ON d.review_id = r.id AND d.user_id = $userId\n" +
-                        "JOIN users u ON r.user_id = u.id WHERE u.is_active=TRUE ORDER BY r.id DESC; "
-            if (usersReview) {
-                query = query.replace("WHERE u.is_active=TRUE", "WHERE u.is_active=TRUE and r.user_id=$userId ")
-            }
-        }
+        val propertyList = mutableListOf<Property>();
+        val propertyidList = mutableListOf<Int>()
+        val query =
+            "SELECT id, name, user_id, description, price FROM properties";
+
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
             while (resultSet?.next() == true) {
-                if(resultSet.getInt("id") !in reviewidList) {
-                    reviewList.add(
-                        Review(
-                            resultSet.getString("review"),
-                            resultSet.getString("username"),
+                if(resultSet.getInt("id") !in propertyidList) {
+                    propertyList.add(
+                        Property(
                             resultSet.getInt("id"),
-                            resultSet.getInt("liked"),
-                            resultSet.getInt("like_count"),
-                            resultSet.getString("admin_reply"),
-                            resultSet.getInt("dislike_count"),
-                            resultSet.getInt("disliked"),
-
+                            resultSet.getString("name"),
+                            resultSet.getInt("user_id"),
+                            resultSet.getString("description"),
+                            resultSet.getInt("price"),
                             )
                     )
-                    reviewidList.add(resultSet.getInt("id"))
+                    propertyidList.add(resultSet.getInt("id"))
                 }
             }
             connection?.close()
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return reviewList
+        return propertyList
     }
 
     fun likeReview(userId: String, reviewId: Int): Boolean {

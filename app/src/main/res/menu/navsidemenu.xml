@@ -12,6 +12,10 @@
         android:title="Add Review"/>
 
     <item
+        android:id="@+id/add_landlord"
+        android:title="Add LandLord"/>
+
+    <item
         android:id="@+id/logout_sidemenu"
         android:title="Logout"/>
 </menu>

@@ -30,11 +30,7 @@ class MainActivity : AppCompatActivity() {
         // If user ID exists, start AllReviews.kt activity
         val isAdmin = voyagerdiariesPref.getString("isAdmin", "");
         if (userId != null) {
-            print(isAdmin);
-            print(",")
-            print(userId);
-            print(">>>>>>>><<<")
-            if (isAdmin == "t"){
+            if (isAdmin == "w"){
                 val intentMainActivity = Intent(this, AddLandlord::class.java)
                 startActivity(intentMainActivity)
             }
@@ -45,13 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         setContentView(R.layout.activity_main)
-        val buttonSignup = findViewById<Button>(R.id.signup);
         val buttonLogin = findViewById<Button>(R.id.login);
-        // Button click listener for Signup button
-        buttonSignup.setOnClickListener {
-            val intent = Intent(this, UserRegister::class.java)
-            startActivity(intent)
-        }
         // Button click listener for Login button
         buttonLogin.setOnClickListener {
             val intent = Intent(this, Reviews::class.java)

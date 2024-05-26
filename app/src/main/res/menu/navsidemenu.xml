@@ -8,7 +8,7 @@
         android:id="@+id/myproperties"
         android:title="My Properties"/>
     <item
-        android:id="@+id/add_review_sidemenu"
+        android:id="@+id/add_properties_sidemenu"
         android:title="Add Properties"/>
 
     <item

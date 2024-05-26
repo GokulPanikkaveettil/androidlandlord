@@ -5,31 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/editTextPostReviews"
-        android:layout_width="324dp"
-        android:layout_height="112dp"
-        android:background="@drawable/edit_text_border"
-        android:hint="Reply to review"
-        android:paddingStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/replyReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/custom_blue"
-        android:text="Post"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.682" />
-
-
-
+    <TextView
+        android:id="@+id/phone"
+        android:layout_width="217dp"
+        android:layout_height="68dp"
+        tools:layout_editor_absoluteX="117dp"
+        tools:layout_editor_absoluteY="191dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

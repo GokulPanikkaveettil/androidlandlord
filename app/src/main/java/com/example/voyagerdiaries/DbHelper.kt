@@ -43,7 +43,9 @@ class Database(context: Context) {
         lastName: String,
         userName: String,
         password: String,
-        gender: String
+        gender: String,
+        is_landlord: Boolean? = false,
+        phoneNumber: String? = "",
     ): Boolean {
         var userAdded = false;
         /*every password should be encrypted using any hashing algorithm
@@ -53,7 +55,7 @@ class Database(context: Context) {
         val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray())
             .joinToString("") { "%02x".format(it) }
         val query =
-            "INSERT INTO users (first_name, last_name, username, password, gender) values ('$firstName', '$lastName', '$userName', '$encryptedPassword', 'nil') returning id"
+            "INSERT INTO users (first_name, last_name, username, password, gender, is_landlord, phone_number) values ('$firstName', '$lastName', '$userName', '$encryptedPassword', 'nil', '$is_landlord', '$phoneNumber') returning id"
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
@@ -137,6 +139,7 @@ class Database(context: Context) {
                 val username = resultSet.getString("username")
                 val isAdmin = resultSet.getString("is_admin")
                 loggedAsAdmin = resultSet.getBoolean("is_admin")
+                val loggedAsLandlord = resultSet.getString("is_landlord")
                 val voyagerdiariesPref =
                     context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
                 val editor = voyagerdiariesPref.edit()
@@ -145,6 +148,7 @@ class Database(context: Context) {
                 editor.putString("userName", username)
                 editor.putString("lastName", lastName)
                 editor.putString("isAdmin", isAdmin)
+                editor.putString("isLandlord", loggedAsLandlord)
                 editor.apply()
                 connection?.close()
             }
@@ -180,24 +184,30 @@ class Database(context: Context) {
         return reviewAdded
     }
 
-    fun replyUserReviews(reviewId: Int, reply: String): Boolean {
+    fun getLandLordDetails(reviewId: Int): String {
         /*
         we update the review field admin_reply with reply posted by admin
         we take the reviewId as parameter.
          */
+        var phone_number: String = ""
 
         val query =
-            "update reviews set admin_reply='$reply' where id=$reviewId returning id";
+            "select a.phone_number from users a join properties p on a.id=p.user_id where p.id='$reviewId'";
+        print(query)
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
 
+            while (resultSet?.next() == true) {
+                phone_number = resultSet.getString("phone_number")
+            }
+            connection?.close()
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            connection?.close()
         }
-        return true
+        print(phone_number)
+        print("::::::")
+        return phone_number
     }
 
     fun updateProfile(firstName: String, lastName: String) {
@@ -233,8 +243,13 @@ class Database(context: Context) {
          */
         val propertyList = mutableListOf<Property>();
         val propertyidList = mutableListOf<Int>()
-        val query =
-            "SELECT id, name, user_id, description, price FROM properties";
+        var query =
+            "SELECT id, name, user_id, description, price FROM properties order by id desc";
+        if (usersReview){
+            query =
+                "SELECT id, name, user_id, description, price FROM properties where user_id='$userId' order by desc";
+        }
+        println(query)
 
         try {
             val statement = connection?.createStatement();
@@ -320,7 +335,7 @@ class Database(context: Context) {
     }
 
 
-    fun deleteReview(reviewId: Int): Boolean {
+    fun deleteProperty(reviewId: Int): Boolean {
         /*
         when a user clicks a delete review button we simple execute the
         delete query and review is deleted based on review_id passed as parameter.
@@ -328,7 +343,7 @@ class Database(context: Context) {
         var deletedReview = false;
         val statement = connection?.createStatement();
         try {
-            val query = "delete from reviews where id=$reviewId returning id"
+            val query = "delete from properties where id=$reviewId returning id"
             val resultSet = statement?.executeQuery(query);
             deletedReview = true;
 
@@ -341,14 +356,14 @@ class Database(context: Context) {
     }
 
 
-    fun editReview(reviewId: Int, review: String) {
+    fun editProperty(reviewId: Int, name: String, description: String, price: Int) {
         /*
         the review passed as parameter is replaced using update query for review with review ID
         that is also passed as parameter.
          */
         val statement = connection?.createStatement();
         try {
-            val query = "update reviews set review='$review' where id=$reviewId returning id"
+            val query = "update properties set name='$name', description='$description', price='$price' where id=$reviewId returning id"
             val resultSet = statement?.executeQuery(query);
 
         } catch (e: Exception) {

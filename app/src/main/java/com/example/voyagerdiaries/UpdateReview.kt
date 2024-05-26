@@ -16,22 +16,34 @@ class UpdateReview : AppCompatActivity() {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_or_update_reviews);
         val intent = intent;
-        val review = intent.getStringExtra("review")
-        val reviewId = intent.getStringExtra("reviewId")
-        val editReview = findViewById<EditText>(R.id.editTextPostReviews)
-        editReview.setText(review)
+        val propertyId = intent.getIntExtra("propertyId", 0)
+        val name = intent.getStringExtra("name")
+        val description = intent.getStringExtra("description")
+        val price = intent.getStringExtra("price")
+        val editname = findViewById<EditText>(R.id.name)
+        val editdescription = findViewById<EditText>(R.id.description)
+        val editprice = findViewById<EditText>(R.id.price)
+        editname.setText(name)
+        editdescription.setText(description)
+        editprice.setText(price)
 
         val postReviewButton = findViewById<Button>(R.id.addProperty);
         postReviewButton.setOnClickListener {
-            if (editReview.text.isBlank() == true) {
+            println(editname.text.toString())
+            println(editdescription.text.toString())
+            println(editprice.text.toString())
+            println("<<<<<<")
+            println(propertyId)
+            if (editname.text.isBlank() == true) {
                 Toast.makeText(
                     this,
-                    "We appreciate your feedback, but we cannot accept empty reviews.",
+                    "we cannot accept empty name.",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
                 coroutineScope.launch {
-                    getReview(reviewId!!.toInt(), editReview.text.toString())
+                    getReview(propertyId!!.toInt(), editname.text.toString(),
+                        editdescription.text.toString(), editprice.text.toString())
                 }
                 startActivity(Intent(this, MyReviews::class.java))
             }
@@ -44,12 +56,12 @@ class UpdateReview : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    private suspend fun getReview(reviewId: Int, review: String): Boolean = withContext(
+    private suspend fun getReview(reviewId: Int, name: String, description: String, price: String): Boolean = withContext(
         Dispatchers.IO
     ) {
         return@withContext try {
             val db = Database(this@UpdateReview)
-            db.editReview(reviewId, review)
+            db.editProperty(reviewId, name, description, price.toInt())
             true
         } catch (e: Exception) {
             e.printStackTrace()

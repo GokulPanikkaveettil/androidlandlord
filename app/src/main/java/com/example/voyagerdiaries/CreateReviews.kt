@@ -80,7 +80,7 @@ class CreateReviews : AppCompatActivity() {
                     val mainIntent = Intent(this@CreateReviews, AddLandlord::class.java)
                     startActivity(mainIntent)
                 }
-                R.id.add_review_sidemenu-> {
+                R.id.add_properties_sidemenu-> {
                     val mainIntent = Intent(this@CreateReviews, CreateReviews::class.java)
                     startActivity(mainIntent)
                 }

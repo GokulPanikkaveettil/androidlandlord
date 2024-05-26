@@ -42,6 +42,11 @@ class MainActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_main)
         val buttonLogin = findViewById<Button>(R.id.login);
+        val buttonSignup = findViewById<Button>(R.id.signup);
+        buttonSignup.setOnClickListener {
+            val intent = Intent(this, UserRegister::class.java)
+            startActivity(intent)
+        }
         // Button click listener for Login button
         buttonLogin.setOnClickListener {
             val intent = Intent(this, Reviews::class.java)
@@ -53,12 +58,7 @@ class MainActivity : AppCompatActivity() {
                 val checkAuthentication =
                     authenticate(userName.text.toString().trim(), password.text.toString().trim())
                 if (checkAuthentication[0]) {
-                    if(checkAuthentication[1]){
-                        startActivity(addLandLord)
-                    }
-                    else {
-                        startActivity(intent)
-                    }
+                    startActivity(intent)
                     // If authentication is successful, start AllReviews.kt activity and show success toast message
                     Toast.makeText(
                         this@MainActivity,

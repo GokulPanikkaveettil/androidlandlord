@@ -38,11 +38,12 @@ class AddLandlord : AppCompatActivity() {
         val lastName = findViewById<EditText>(R.id.editTextLastName);
         val userName = findViewById<EditText>(R.id.editTextUsername);
         val password = findViewById<EditText>(R.id.editTextPassword);
+        val phoneNumber = findViewById<EditText>(R.id.phoneNumber);
         button.setOnClickListener {
                 coroutineScope.launch {
                     val userAdded = addNewLandlord(
                         firstName.text.toString().trim(), lastName.text.toString().trim(),
-                        userName.text.toString().trim(), password.text.toString().trim()
+                        userName.text.toString().trim(), password.text.toString().trim(), phoneNumber.text.toString().trim()
                     )
                     if (userAdded == true) {
                         Toast.makeText(
@@ -72,7 +73,7 @@ class AddLandlord : AppCompatActivity() {
                     val mainIntent = Intent(this@AddLandlord, Reviews::class.java)
                     startActivity(mainIntent)
                 }
-                R.id.add_review_sidemenu-> {
+                R.id.add_properties_sidemenu-> {
                     val mainIntent = Intent(this@AddLandlord, CreateReviews::class.java)
                     startActivity(mainIntent)
                 }
@@ -98,11 +99,11 @@ class AddLandlord : AppCompatActivity() {
         }
     }
 
-    private suspend fun addNewLandlord(firstName: String,lastName: String,userName: String,password: String
-    ): Boolean = withContext(Dispatchers.IO) {
+    private suspend fun addNewLandlord(firstName: String,lastName: String,userName: String,password: String,
+                                       phoneNumber: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             val db = Database(this@AddLandlord)
-            db.addNewUser(firstName, lastName, userName, password, "")
+            db.addNewUser(firstName, lastName, userName, password, "", true, phoneNumber)
         } catch (e: Exception) {
             e.printStackTrace()
             false

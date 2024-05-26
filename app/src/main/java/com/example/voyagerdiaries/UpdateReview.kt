@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.*
 
 
-class UpdateReview : AppCompatActivity() {
+class UpdateProperty : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_or_update_reviews);
+        setContentView(R.layout.create_or_update_properties);
         val intent = intent;
         val propertyId = intent.getIntExtra("propertyId", 0)
         val name = intent.getStringExtra("name")
@@ -27,8 +27,8 @@ class UpdateReview : AppCompatActivity() {
         editdescription.setText(description)
         editprice.setText(price)
 
-        val postReviewButton = findViewById<Button>(R.id.addProperty);
-        postReviewButton.setOnClickListener {
+        val postpropertyButton = findViewById<Button>(R.id.addProperty);
+        postpropertyButton.setOnClickListener {
             println(editname.text.toString())
             println(editdescription.text.toString())
             println(editprice.text.toString())
@@ -42,10 +42,10 @@ class UpdateReview : AppCompatActivity() {
                 ).show()
             } else {
                 coroutineScope.launch {
-                    getReview(propertyId!!.toInt(), editname.text.toString(),
+                    getProperty(propertyId!!.toInt(), editname.text.toString(),
                         editdescription.text.toString(), editprice.text.toString())
                 }
-                startActivity(Intent(this, MyReviews::class.java))
+                startActivity(Intent(this, MyProperties::class.java))
             }
         }
 
@@ -56,12 +56,12 @@ class UpdateReview : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    private suspend fun getReview(reviewId: Int, name: String, description: String, price: String): Boolean = withContext(
+    private suspend fun getProperty(propertyId: Int, name: String, description: String, price: String): Boolean = withContext(
         Dispatchers.IO
     ) {
         return@withContext try {
-            val db = Database(this@UpdateReview)
-            db.editProperty(reviewId, name, description, price.toInt())
+            val db = Database(this@UpdateProperty)
+            db.editProperty(propertyId, name, description, price.toInt())
             true
         } catch (e: Exception) {
             e.printStackTrace()

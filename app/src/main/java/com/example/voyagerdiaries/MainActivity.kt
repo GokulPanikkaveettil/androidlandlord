@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         // Retrieve user ID from shared preferences
         val userId = voyagerdiariesPref.getString("id", null);
-        // If user ID exists, start AllReviews.kt activity
+        // If user ID exists, start AllProperties.kt activity
         val isAdmin = voyagerdiariesPref.getString("isAdmin", "");
         if (userId != null) {
             if (isAdmin == "w"){
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intentMainActivity)
             }
             else {
-                val intentMainActivity = Intent(this, Reviews::class.java)
+                val intentMainActivity = Intent(this, Properties::class.java)
                 startActivity(intentMainActivity)
             }
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
         // Button click listener for Login button
         buttonLogin.setOnClickListener {
-            val intent = Intent(this, Reviews::class.java)
+            val intent = Intent(this, Properties::class.java)
             val addLandLord = Intent(this, AddLandlord::class.java)
             val userName = findViewById<EditText>(R.id.editTextUsernameLogin);
             val password = findViewById<EditText>(R.id.editTextPasswordLogin);
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                     authenticate(userName.text.toString().trim(), password.text.toString().trim())
                 if (checkAuthentication[0]) {
                     startActivity(intent)
-                    // If authentication is successful, start AllReviews.kt activity and show success toast message
+                    // If authentication is successful, start AllProperties.kt activity and show success toast message
                     Toast.makeText(
                         this@MainActivity,
                         "Authentication successful....",

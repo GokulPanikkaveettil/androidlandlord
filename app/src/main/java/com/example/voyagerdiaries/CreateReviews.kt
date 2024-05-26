@@ -14,13 +14,13 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.*
 
-class CreateReviews : AppCompatActivity() {
+class CreateProperties : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_or_update_reviews);
+        setContentView(R.layout.create_or_update_properties);
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout);
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle);
@@ -46,14 +46,14 @@ class CreateReviews : AppCompatActivity() {
                 coroutineScope.launch {
                     val reviewAdded = addProperty(name.text.toString(), description.text.toString(), price.text.toString())
                     if(reviewAdded) {
-                        val intent = Intent(this@CreateReviews, Reviews::class.java)
+                        val intent = Intent(this@CreateProperties, Properties::class.java)
                         startActivity(intent)
                         name.setText("")
                     }
                     else
                     {
                         Toast.makeText(
-                            this@CreateReviews,
+                            this@CreateProperties,
                             "Review Add failed. Please modify your input.",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -69,31 +69,31 @@ class CreateReviews : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.myproperties-> {
-                    val mainIntent = Intent(this@CreateReviews, MyReviews::class.java)
+                    val mainIntent = Intent(this@CreateProperties, MyProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {
-                    val mainIntent = Intent(this@CreateReviews, Reviews::class.java)
+                    val mainIntent = Intent(this@CreateProperties, Properties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_landlord-> {
-                    val mainIntent = Intent(this@CreateReviews, AddLandlord::class.java)
+                    val mainIntent = Intent(this@CreateProperties, AddLandlord::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_properties_sidemenu-> {
-                    val mainIntent = Intent(this@CreateReviews, CreateReviews::class.java)
+                    val mainIntent = Intent(this@CreateProperties, CreateProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.logout_sidemenu-> {
                     val voyagerdiariesPref =
-                        this@CreateReviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+                        this@CreateProperties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
                     val editor = voyagerdiariesPref.edit()
                     editor.remove("id")
                     editor.remove("firstName")
                     editor.remove("lastName")
                     editor.remove("userName")
                     editor.apply()
-                    val mainIntent = Intent(this@CreateReviews, MainActivity::class.java)
+                    val mainIntent = Intent(this@CreateProperties, MainActivity::class.java)
                     mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(mainIntent)
                 }
@@ -111,7 +111,7 @@ class CreateReviews : AppCompatActivity() {
         Dispatchers.IO
     ) {
         return@withContext try {
-            val db = Database(this@CreateReviews)
+            val db = Database(this@CreateProperties)
             db.postProperty(name, description, price.toInt())
         } catch (e: Exception) {
             e.printStackTrace()

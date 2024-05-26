@@ -28,7 +28,7 @@ class Profile : AppCompatActivity() {
         }
         val myReviewsList = findViewById<ImageButton>(R.id.myReviewsList)
         myReviewsList.setOnClickListener {
-            startActivity(Intent(this, MyReviews::class.java))
+            startActivity(Intent(this, MyProperties::class.java))
         }
 
 
@@ -38,15 +38,15 @@ class Profile : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.myproperties-> {
-                    val mainIntent = Intent(this@Profile, MyReviews::class.java)
+                    val mainIntent = Intent(this@Profile, MyProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {
-                    val mainIntent = Intent(this@Profile, Reviews::class.java)
+                    val mainIntent = Intent(this@Profile, Properties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_properties_sidemenu-> {
-                    val mainIntent = Intent(this@Profile, CreateReviews::class.java)
+                    val mainIntent = Intent(this@Profile, CreateProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.logout_sidemenu-> {

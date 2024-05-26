@@ -40,7 +40,7 @@ class ProfileUpdate : AppCompatActivity() {
             else {
                 coroutineScope.launch {
                     updateProfile(updateFirstName.text.toString(), updateLastName.text.toString());
-                    val intent = Intent(this@ProfileUpdate, Reviews::class.java)
+                    val intent = Intent(this@ProfileUpdate, Properties::class.java)
                     startActivity(intent)
                 }
             }

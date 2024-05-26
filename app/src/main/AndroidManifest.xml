@@ -24,11 +24,11 @@
         android:theme="@style/Theme.VoyagerDiaries"
         tools:targetApi="31">
         <activity
-            android:name=".ReviewReply"
+            android:name=".GetLandLordDetails"
             android:label="Admin Reply"
             android:exported="false" />
         <activity
-            android:name=".MyReviews"
+            android:name=".MyProperties"
             android:label="My Properties"
             android:exported="false" />
         <activity
@@ -57,13 +57,13 @@
             android:name=".UserRegister"
             android:label="Sign Up" />
         <activity
-            android:name=".Reviews"
+            android:name=".Properties"
             android:label="All Properties" />
         <activity
-            android:name=".CreateReviews"
+            android:name=".CreateProperties"
             android:label="Add Property" />
         <activity
-            android:name=".UpdateReview"
+            android:name=".UpdateProperty"
             android:label="Edit Property" />
     </application>
 

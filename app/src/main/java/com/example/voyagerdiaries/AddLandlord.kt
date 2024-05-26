@@ -66,15 +66,15 @@ class AddLandlord : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.myproperties-> {
-                    val mainIntent = Intent(this@AddLandlord, MyReviews::class.java)
+                    val mainIntent = Intent(this@AddLandlord, MyProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {
-                    val mainIntent = Intent(this@AddLandlord, Reviews::class.java)
+                    val mainIntent = Intent(this@AddLandlord, Properties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_properties_sidemenu-> {
-                    val mainIntent = Intent(this@AddLandlord, CreateReviews::class.java)
+                    val mainIntent = Intent(this@AddLandlord, CreateProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_landlord-> {

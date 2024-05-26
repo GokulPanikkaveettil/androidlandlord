@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
 
-class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemClickListener) :
+class MyPropertyViewHolder(itemView: View, listener: MyPropertiesItemAdapter.onItemClickListener) :
     RecyclerView.ViewHolder(itemView) {
     val name: TextView = itemView.findViewById(R.id.name);
     val description: TextView = itemView.findViewById(R.id.description);
@@ -34,89 +34,89 @@ class MyReviewViewHolder(itemView: View, listener: MyReviewsItemAdapter.onItemCl
     }
 }
 
-class MyReviewsItemAdapter(private val reviews: List<Property>) :
-    RecyclerView.Adapter<MyReviewViewHolder>() {
+class MyPropertiesItemAdapter(private val propertys: List<Property>) :
+    RecyclerView.Adapter<MyPropertyViewHolder>() {
     private lateinit var holderListener: onItemClickListener
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyReviewViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyPropertyViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.my_review_list_layout, parent, false)
-        return MyReviewViewHolder(itemView, holderListener)
+            .inflate(R.layout.my_property_list_layout, parent, false)
+        return MyPropertyViewHolder(itemView, holderListener)
     }
 
     interface onItemClickListener {
-        fun onItemClick(position: Int, reviewId: Int, action: String)
+        fun onItemClick(position: Int, propertyId: Int, action: String)
     }
 
     fun setOnItemClickListener(listener: onItemClickListener) {
         holderListener = listener
     }
 
-    override fun onBindViewHolder(holder: MyReviewViewHolder, position: Int) {
-        val review = reviews[position]
-        holder.name.text = review.name
-        holder.description.text = review.description
-        holder.price.text = review.price.toString()
-        holder.propertyId = review.id
+    override fun onBindViewHolder(holder: MyPropertyViewHolder, position: Int) {
+        val property = propertys[position]
+        holder.name.text = property.name
+        holder.description.text = property.description
+        holder.price.text = property.price.toString()
+        holder.propertyId = property.id
     }
 
-    override fun getItemCount(): Int = reviews.size
+    override fun getItemCount(): Int = propertys.size
 }
 
-class MyReviews : AppCompatActivity() {
-    var reviewList = mutableListOf<Property>();
+class MyProperties : AppCompatActivity() {
+    var propertyList = mutableListOf<Property>();
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_my_reviews)
+        setContentView(R.layout.activity_my_propertys)
 
         // Set up the bottom navigation view
         coroutineScope.launch {
             val voyagerdiariesPref =
-                this@MyReviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+                this@MyProperties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
             val userId = voyagerdiariesPref.getString("id", null);
-            // Retrieve the user's reviews from the Database
-            reviewList = getReview(userId!!)
-            val recyclerView = findViewById<RecyclerView>(R.id.myReviews)
-            recyclerView.layoutManager = LinearLayoutManager(this@MyReviews)
-            if (reviewList.size < 1){
+            // Retrieve the user's propertys from the Database
+            propertyList = getProperty(userId!!)
+            val recyclerView = findViewById<RecyclerView>(R.id.MyProperties)
+            recyclerView.layoutManager = LinearLayoutManager(this@MyProperties)
+            if (propertyList.size < 1){
                 Toast.makeText(
-                    this@MyReviews,
-                    "Currently, there are no reviews available in this section.",
+                    this@MyProperties,
+                    "Currently, there are no propertys available in this section.",
                     Toast.LENGTH_SHORT
                 ).show()
             }
             // configure the adapter for the RecyclerView
-            val itemAdapter = MyReviewsItemAdapter(reviewList)
+            val itemAdapter = MyPropertiesItemAdapter(propertyList)
             recyclerView.adapter = itemAdapter
 
             // Set item click listener for the RecyclerView
-            itemAdapter.setOnItemClickListener(object : MyReviewsItemAdapter.onItemClickListener {
-                override fun onItemClick(position: Int, reviewId: Int, action: String) {
+            itemAdapter.setOnItemClickListener(object : MyPropertiesItemAdapter.onItemClickListener {
+                override fun onItemClick(position: Int, propertyId: Int, action: String) {
                     val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                    //Like  review asynchronously
+                    //Like  property asynchronously
                     if (action == "delete") {
-                        // Delete the review asynchronously
+                        // Delete the property asynchronously
                         coroutineScope.launch {
-                            deleteProperty(reviewId)
-                            reviewList.removeAt(position)
+                            deleteProperty(propertyId)
+                            propertyList.removeAt(position)
                             itemAdapter.notifyItemRemoved(position)
                         }
                     } else if (action == "edit") {
-                        println(reviewId)
-                        println("here is review")
+                        println(propertyId)
+                        println("here is property")
                         val name =
                             buttonHolder?.itemView?.findViewById<TextView>(R.id.name)
                         val description =
                             buttonHolder?.itemView?.findViewById<TextView>(R.id.description)
                         val price =
                             buttonHolder?.itemView?.findViewById<TextView>(R.id.price)
-                        // Start the EditReview activity to edit the review
-                        val editReviewIntent = Intent(this@MyReviews, UpdateReview::class.java)
-                        editReviewIntent.putExtra("name", name?.text.toString())
-                        editReviewIntent.putExtra("description", description?.text.toString())
-                        editReviewIntent.putExtra("propertyId", reviewId)
-                        editReviewIntent.putExtra("price", price?.text.toString())
-                        startActivity(editReviewIntent)
+                        // Start the EditProperty activity to edit the property
+                        val editPropertyIntent = Intent(this@MyProperties, UpdateProperty::class.java)
+                        editPropertyIntent.putExtra("name", name?.text.toString())
+                        editPropertyIntent.putExtra("description", description?.text.toString())
+                        editPropertyIntent.putExtra("propertyId", propertyId)
+                        editPropertyIntent.putExtra("price", price?.text.toString())
+                        startActivity(editPropertyIntent)
                     }
                 }
 
@@ -129,10 +129,10 @@ class MyReviews : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    private suspend fun deleteProperty(reviewId: Int): Boolean = withContext(Dispatchers.IO) {
+    private suspend fun deleteProperty(propertyId: Int): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
-            val db = Database(this@MyReviews)
-            db.deleteProperty(reviewId)
+            val db = Database(this@MyProperties)
+            db.deleteProperty(propertyId)
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -140,42 +140,18 @@ class MyReviews : AppCompatActivity() {
         }
     }
 
-    private suspend fun dislikeReview(userId: String, reviewId: Int): Boolean =
-        withContext(Dispatchers.IO) {
-            return@withContext try {
-                val db = Database(this@MyReviews)
-                db.dislikeReview(userId, reviewId)
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
-        }
-
-    private suspend fun likeReview(userId: String, reviewId: Int): Boolean =
-        withContext(Dispatchers.IO) {
-            return@withContext try {
-                val db = Database(this@MyReviews)
-                db.likeReview(userId, reviewId)
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
-        }
-
-    private suspend fun getReview(
+    private suspend fun getProperty(
         userId: String,
-        usersReview: Boolean = true
+        usersProperty: Boolean = true
     ): MutableList<Property> = withContext(
         Dispatchers.IO
     ) {
         return@withContext try {
-            val db = Database(this@MyReviews)
-            db.getAllProperty(userId, usersReview)
+            val db = Database(this@MyProperties)
+            db.getAllProperty(userId, usersProperty)
         } catch (e: Exception) {
             e.printStackTrace()
-            reviewList
+            propertyList
         }
     }
 }

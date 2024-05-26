@@ -20,7 +20,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.withContext
 
 
-    data class Review(val review: String, val fullName: String, val reviewId: Int, val liked: Int, val likeCount: Int, val adminReply: String?, val dislikeCount: Int, val disliked: Int)
     data class Property(val id: Int, val name: String, val user_id: Int, val description: String, val price: Int);
 class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener) :
     RecyclerView.ViewHolder(itemView) {
@@ -37,19 +36,19 @@ class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener
     }
 }
 
-class ItemAdapter(private val reviews: List<Property>, val isAdmin: String) : RecyclerView.Adapter<ReviewViewHolder>() {
+class ItemAdapter(private val properties: List<Property>, val isAdmin: String) : RecyclerView.Adapter<ReviewViewHolder>() {
     private lateinit var holderListener: onItemClickListener
 
     // Create the item's view holder.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         // Inflate the layout for the item view
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.review_list_layout, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.property_list_layout, parent, false)
         return ReviewViewHolder(itemView, holderListener)
     }
 
     // Interface for item click listener
     interface onItemClickListener {
-        fun onItemClick(position: Int, reviewId: Int, action: String)
+        fun onItemClick(position: Int, propertyId: Int, action: String)
     }
 
     // Configure the item click listener
@@ -59,35 +58,35 @@ class ItemAdapter(private val reviews: List<Property>, val isAdmin: String) : Re
 
     // Bind data to the view holder
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
-        val review = reviews[position]
+        val property = properties[position]
 
-        // Set the review text and user name
-        holder.name.text = review.name
-        holder.description.text = review.description
-        holder.price.text = "price: £" + review.price.toString()
-        holder.propertyId = review.id
+        // Set the property text and user name
+        holder.name.text = property.name
+        holder.description.text = property.description
+        holder.price.text = "price: £" + property.price.toString()
+        holder.propertyId = property.id
     }
 
-    override fun getItemCount(): Int = reviews.size
+    override fun getItemCount(): Int = properties.size
 }
 
 
 
-class Reviews : AppCompatActivity() {
+class Properties : AppCompatActivity() {
     var propertyList = mutableListOf<Property>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.reviews)
+        setContentView(R.layout.properties)
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout);
-        toggle = ActionBarDrawerToggle(this@Reviews, drawerLayout, R.string.open, R.string.close)
+        toggle = ActionBarDrawerToggle(this@Properties, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true);
         val navView = findViewById<NavigationView>(R.id.navView);
-        val sharedPref = this@Reviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+        val sharedPref = this@Properties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
 
         val is_admin = sharedPref.getString("isAdmin", "f")
         val isLandlord = sharedPref.getString("isLandlord", "f")
@@ -105,31 +104,31 @@ class Reviews : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.myproperties-> {
-                    val mainIntent = Intent(this@Reviews, MyReviews::class.java)
+                    val mainIntent = Intent(this@Properties, MyProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_landlord-> {
-                    val mainIntent = Intent(this@Reviews, AddLandlord::class.java)
+                    val mainIntent = Intent(this@Properties, AddLandlord::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {
-                    val mainIntent = Intent(this@Reviews, Reviews::class.java)
+                    val mainIntent = Intent(this@Properties, Properties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_properties_sidemenu-> {
-                    val mainIntent = Intent(this@Reviews, CreateReviews::class.java)
+                    val mainIntent = Intent(this@Properties, CreateProperties::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.logout_sidemenu-> {
                     val voyagerdiariesPref =
-                        this@Reviews.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+                        this@Properties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
                     val editor = voyagerdiariesPref.edit()
                     editor.remove("id")
                     editor.remove("firstName")
                     editor.remove("lastName")
                     editor.remove("userName")
                     editor.apply()
-                    val mainIntent = Intent(this@Reviews, MainActivity::class.java)
+                    val mainIntent = Intent(this@Properties, MainActivity::class.java)
                     mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(mainIntent)
                 }
@@ -142,25 +141,25 @@ class Reviews : AppCompatActivity() {
         val isAdmin = voyagerdiariesPref.getString("isAdmin", null)
 
         coroutineScope.launch {
-            // Retrieve the review list from the Database class
+            // Retrieve the property list from the Database class
             propertyList = getReview(userId!!)
 
             // Set up the RecyclerView
-            val recyclerView = findViewById<RecyclerView>(R.id.allReviews)
-            recyclerView.layoutManager = LinearLayoutManager(this@Reviews)
+            val recyclerView = findViewById<RecyclerView>(R.id.allProperties)
+            recyclerView.layoutManager = LinearLayoutManager(this@Properties)
             val itemAdapter = ItemAdapter(propertyList, isAdmin.toString())
             recyclerView.adapter = itemAdapter
 
             // Set item click listener for the RecyclerView
             itemAdapter.setOnItemClickListener(object : ItemAdapter.onItemClickListener {
-                override fun onItemClick(position: Int, reviewId: Int, action: String) {
+                override fun onItemClick(position: Int, propertyId: Int, action: String) {
                     println(action)
                     val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                     if (action == "connect") {
-                        // Start the ReviewReply activity to reply to a review
-                        println(reviewId)
-                        val replyReviewIntent = Intent(this@Reviews, ReviewReply::class.java)
-                        replyReviewIntent.putExtra("propertyId", reviewId.toString())
+                        // Start the ReviewReply activity to reply to a property
+                        println(propertyId)
+                        val replyReviewIntent = Intent(this@Properties, GetLandLordDetails::class.java)
+                        replyReviewIntent.putExtra("propertyId", propertyId.toString())
                         startActivity(replyReviewIntent)
                     }
                 }
@@ -177,10 +176,10 @@ class Reviews : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    // Function to retrieve reviews from the Database helper class
+    // Function to retrieve properties from the Database helper class
     private suspend fun getReview(userId: String, usersReview: Boolean = false): MutableList<Property> = withContext(Dispatchers.IO) {
         return@withContext try {
-            val db = Database(this@Reviews)
+            val db = Database(this@Properties)
             db.getAllProperty(userId)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -188,29 +187,9 @@ class Reviews : AppCompatActivity() {
         }
     }
 
-    // Function to perform like action on a review
-    private suspend fun likeReview(userId: String, reviewId: Int): Boolean = withContext(Dispatchers.IO) {
-        return@withContext try {
-            val db = Database(this@Reviews)
-            db.likeReview(userId, reviewId)
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
+    // Function to perform like action on a property
 
-    // Function to perform dislike action on a review
-    private suspend fun dislikeReview(userId: String, reviewId: Int): Boolean = withContext(Dispatchers.IO) {
-        return@withContext try {
-            val db = Database(this@Reviews)
-            db.dislikeReview(userId, reviewId)
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
+    // Function to perform dislike action on a property
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(toggle.onOptionsItemSelected(item)){

@@ -18,24 +18,24 @@
         tools:layout_editor_absoluteY="165dp" />
 
     <EditText
-        android:id="@+id/editTextUsernameLogin"
+        android:id="@+id/editTextUsername"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_border"
         android:ems="10"
-        android:hint="Username"
         android:maxLength="50"
+        android:hint="Username"
         android:inputType="textPersonName"
         android:paddingStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.233" />
+        app:layout_constraintVertical_bias="0.600" />
 
     <EditText
-        android:id="@+id/editTextPasswordLogin"
+        android:id="@+id/editTextPassword"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_border"
@@ -46,25 +46,57 @@
         android:paddingStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.377" />
+        app:layout_constraintVertical_bias="0.750" />
 
     <Button
-        android:id="@+id/login"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:id="@+id/signup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:backgroundTint="@color/custom_blue"
-        android:text="Sign In"
+        android:text="Add Landlord"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.464"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.535" />
+        app:layout_constraintVertical_bias="0.904" />
 
+    <EditText
+        android:id="@+id/editTextFirstName"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_border"
+        android:ems="10"
+        android:hint="First Name"
+        android:maxLength="50"
+        android:inputType="textPersonName"
+        android:paddingStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.150" />
 
+    <EditText
+        android:id="@+id/editTextLastName"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_border"
+        android:ems="10"
+        android:hint="Last Name"
+        android:maxLength="50"
+        android:inputType="textPersonName"
+        android:paddingStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.300" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

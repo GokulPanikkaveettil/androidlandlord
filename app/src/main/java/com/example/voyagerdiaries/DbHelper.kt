@@ -52,7 +52,7 @@ class Database(context: Context) {
         val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray())
             .joinToString("") { "%02x".format(it) }
         val query =
-            "INSERT INTO users (first_name, last_name, username, password, gender) values ('$firstName', '$lastName', '$userName', '$encryptedPassword', '$gender') returning id"
+            "INSERT INTO users (first_name, last_name, username, password, gender) values ('$firstName', '$lastName', '$userName', '$encryptedPassword', 'nil') returning id"
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
@@ -111,7 +111,7 @@ class Database(context: Context) {
     }
 
 
-    fun authenticateUser(userName: String, password: String): Boolean {
+    fun authenticateUser(userName: String, password: String): List<Boolean> {
         /*
         when a user enter a username and password the password is encrypted
         and we check for an entry in database.
@@ -119,6 +119,7 @@ class Database(context: Context) {
         last name into sharedpreference which is like a localstorage in web browser
          */
         var authenticationSuccess = false;
+        var loggedAsAdmin = false;
         val encryptedPassword = MessageDigest.getInstance("SHA-1").digest(password.toByteArray())
             .joinToString("") { "%02x".format(it) }
         val query =
@@ -134,6 +135,7 @@ class Database(context: Context) {
                 val lastName = resultSet.getString("last_name")
                 val username = resultSet.getString("username")
                 val isAdmin = resultSet.getString("is_admin")
+                loggedAsAdmin = resultSet.getBoolean("is_admin")
                 val voyagerdiariesPref =
                     context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
                 val editor = voyagerdiariesPref.edit()
@@ -149,7 +151,7 @@ class Database(context: Context) {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return authenticationSuccess
+        return listOf(authenticationSuccess, loggedAsAdmin)
     }
 
 

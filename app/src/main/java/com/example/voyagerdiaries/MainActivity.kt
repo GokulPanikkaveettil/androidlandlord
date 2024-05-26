@@ -28,9 +28,21 @@ class MainActivity : AppCompatActivity() {
         // Retrieve user ID from shared preferences
         val userId = voyagerdiariesPref.getString("id", null);
         // If user ID exists, start AllReviews.kt activity
+        val isAdmin = voyagerdiariesPref.getString("isAdmin", "");
         if (userId != null) {
-            val intentMainActivity = Intent(this, Reviews::class.java)
-            startActivity(intentMainActivity)
+            print(isAdmin);
+            print(",")
+            print(userId);
+            print(">>>>>>>><<<")
+            if (isAdmin == "t"){
+                val intentMainActivity = Intent(this, AddLandlord::class.java)
+                startActivity(intentMainActivity)
+            }
+            else {
+                val intentMainActivity = Intent(this, Reviews::class.java)
+                startActivity(intentMainActivity)
+            }
+
         }
         setContentView(R.layout.activity_main)
         val buttonSignup = findViewById<Button>(R.id.signup);
@@ -43,14 +55,20 @@ class MainActivity : AppCompatActivity() {
         // Button click listener for Login button
         buttonLogin.setOnClickListener {
             val intent = Intent(this, Reviews::class.java)
+            val addLandLord = Intent(this, AddLandlord::class.java)
             val userName = findViewById<EditText>(R.id.editTextUsernameLogin);
             val password = findViewById<EditText>(R.id.editTextPasswordLogin);
             // Launch a coroutine to perform authentication
             coroutineScope.launch {
                 val checkAuthentication =
                     authenticate(userName.text.toString().trim(), password.text.toString().trim())
-                if (checkAuthentication) {
-                    startActivity(intent)
+                if (checkAuthentication[0]) {
+                    if(checkAuthentication[1]){
+                        startActivity(addLandLord)
+                    }
+                    else {
+                        startActivity(intent)
+                    }
                     // If authentication is successful, start AllReviews.kt activity and show success toast message
                     Toast.makeText(
                         this@MainActivity,
@@ -72,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    private suspend fun authenticate(userName: String, password: String): Boolean =
+    private suspend fun authenticate(userName: String, password: String): List<Boolean> =
         withContext(Dispatchers.IO) {
             val db = Database(this@MainActivity)
             db.authenticateUser(userName, password)

@@ -1,5 +1,5 @@
 import android.content.Context
-import com.example.voyagerdiaries.Property
+import com.example.pgLandlords.Property
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -123,9 +123,9 @@ class Database(context: Context) {
                 val isAdmin = resultSet.getString("is_admin")
                 loggedAsAdmin = resultSet.getBoolean("is_admin")
                 val loggedAsLandlord = resultSet.getString("is_landlord")
-                val voyagerdiariesPref =
-                    context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-                val editor = voyagerdiariesPref.edit()
+                val pgLandlordsPref =
+                    context.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+                val editor = pgLandlordsPref.edit()
                 editor.putString("id", id.toString())
                 editor.putString("firstName", firstName)
                 editor.putString("userName", username)
@@ -149,9 +149,9 @@ class Database(context: Context) {
         we take the user ID from sharedpreference and insert the property text passed as parameter
          */
         var propertyAdded = true
-        val voyagerdiariesPref =
-            context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-        val userId = voyagerdiariesPref.getString("id", null);
+        val pgLandlordsPref =
+            context.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+        val userId = pgLandlordsPref.getString("id", null);
         val query =
             "insert into properties (name, user_id, description, price) values ('$name','$userId', '$description', '$price') returning id";
         try {
@@ -198,16 +198,16 @@ class Database(context: Context) {
         here we update the user's first name and lastname using update SQL query
         we do not allow user to change username.
          */
-        val voyagerdiariesPref =
-            context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-        val userId = voyagerdiariesPref.getString("id", null);
+        val pgLandlordsPref =
+            context.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+        val userId = pgLandlordsPref.getString("id", null);
         val query =
             "update users set first_name='$firstName', last_name='$lastName' where id=$userId returning id";
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);
             if (resultSet?.next() == true) {
-                val editor = voyagerdiariesPref.edit();
+                val editor = pgLandlordsPref.edit();
                 editor.putString("firstName", firstName);
                 editor.putString("lastName", lastName);
                 editor.apply()

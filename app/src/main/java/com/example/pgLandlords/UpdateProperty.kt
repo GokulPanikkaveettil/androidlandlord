@@ -1,4 +1,4 @@
-package com.example.voyagerdiaries
+package com.example.pgLandlords
 
 import Database
 import android.content.Intent

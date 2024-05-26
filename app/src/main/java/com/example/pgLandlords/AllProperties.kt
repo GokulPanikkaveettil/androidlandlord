@@ -1,4 +1,4 @@
-package com.example.voyagerdiaries
+package com.example.pgLandlords
 
 import Database
 import android.content.Context
@@ -86,7 +86,7 @@ class Properties : AppCompatActivity() {
         toggle.syncState();
         getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true);
         val navView = findViewById<NavigationView>(R.id.navView);
-        val sharedPref = this@Properties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+        val sharedPref = this@Properties.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
 
         val is_admin = sharedPref.getString("isAdmin", "f")
         val isLandlord = sharedPref.getString("isLandlord", "f")
@@ -120,9 +120,9 @@ class Properties : AppCompatActivity() {
                     startActivity(mainIntent)
                 }
                 R.id.logout_sidemenu-> {
-                    val voyagerdiariesPref =
-                        this@Properties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-                    val editor = voyagerdiariesPref.edit()
+                    val pgLandlordsPref =
+                        this@Properties.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+                    val editor = pgLandlordsPref.edit()
                     editor.remove("id")
                     editor.remove("firstName")
                     editor.remove("lastName")
@@ -136,9 +136,9 @@ class Properties : AppCompatActivity() {
             true
         }
         // Get user ID and admin status from shared preferences
-        val voyagerdiariesPref = this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-        val userId = voyagerdiariesPref.getString("id", null)
-        val isAdmin = voyagerdiariesPref.getString("isAdmin", null)
+        val pgLandlordsPref = this.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+        val userId = pgLandlordsPref.getString("id", null)
+        val isAdmin = pgLandlordsPref.getString("isAdmin", null)
 
         coroutineScope.launch {
             // Retrieve the property list from the Database class

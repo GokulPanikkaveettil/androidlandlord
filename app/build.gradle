@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.voyagerdiaries'
+    namespace 'com.example.pgLandlords'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.voyagerdiaries"
+        applicationId "com.example.pgLandlords"
         minSdk 24
         targetSdk 33
         versionCode 1

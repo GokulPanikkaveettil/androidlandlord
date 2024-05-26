@@ -1,4 +1,4 @@
-package com.example.voyagerdiaries
+package com.example.pgLandlords
 
 import Database
 import android.content.Context
@@ -23,12 +23,12 @@ class MainActivity : AppCompatActivity() {
              */
             checkAndCreateTables()
         }
-        val voyagerdiariesPref =
-            this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
+        val pgLandlordsPref =
+            this.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
         // Retrieve user ID from shared preferences
-        val userId = voyagerdiariesPref.getString("id", null);
+        val userId = pgLandlordsPref.getString("id", null);
         // If user ID exists, start AllProperties.kt activity
-        val isAdmin = voyagerdiariesPref.getString("isAdmin", "");
+        val isAdmin = pgLandlordsPref.getString("isAdmin", "");
         if (userId != null) {
             if (isAdmin == "w"){
                 val intentMainActivity = Intent(this, AddLandlord::class.java)

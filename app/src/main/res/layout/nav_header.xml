@@ -2,7 +2,7 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:background="@color/custom_blue"
+    android:background="#F16820"
     >
 
 </androidx.drawerlayout.widget.DrawerLayout>

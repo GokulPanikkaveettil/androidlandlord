@@ -1,4 +1,4 @@
-package com.example.voyagerdiaries
+package com.example.pgLandlords
 
 import android.content.Context
 import android.content.Intent
@@ -50,9 +50,9 @@ class Profile : AppCompatActivity() {
                     startActivity(mainIntent)
                 }
                 R.id.logout_sidemenu-> {
-                    val voyagerdiariesPref =
-                        this@Profile.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-                    val editor = voyagerdiariesPref.edit()
+                    val pgLandlordsPref =
+                        this@Profile.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+                    val editor = pgLandlordsPref.edit()
                     editor.remove("id")
                     editor.remove("firstName")
                     editor.remove("lastName")

@@ -1,4 +1,4 @@
-package com.example.voyagerdiaries
+package com.example.pgLandlords
 
 import Database
 import android.content.Context
@@ -71,9 +71,9 @@ class MyProperties : AppCompatActivity() {
 
         // Set up the bottom navigation view
         coroutineScope.launch {
-            val voyagerdiariesPref =
-                this@MyProperties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-            val userId = voyagerdiariesPref.getString("id", null);
+            val pgLandlordsPref =
+                this@MyProperties.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+            val userId = pgLandlordsPref.getString("id", null);
             // Retrieve the user's propertys from the Database
             propertyList = getProperty(userId!!)
             val recyclerView = findViewById<RecyclerView>(R.id.MyProperties)

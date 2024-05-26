@@ -1,4 +1,4 @@
-package com.example.voyagerdiaries
+package com.example.pgLandlords
 
 import Database
 import android.content.Context
@@ -85,9 +85,9 @@ class CreateProperties : AppCompatActivity() {
                     startActivity(mainIntent)
                 }
                 R.id.logout_sidemenu-> {
-                    val voyagerdiariesPref =
-                        this@CreateProperties.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-                    val editor = voyagerdiariesPref.edit()
+                    val pgLandlordsPref =
+                        this@CreateProperties.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+                    val editor = pgLandlordsPref.edit()
                     editor.remove("id")
                     editor.remove("firstName")
                     editor.remove("lastName")

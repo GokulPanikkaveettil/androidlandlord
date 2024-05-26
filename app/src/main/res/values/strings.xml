@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">voyagerDiaries</string>
+    <string name="app_name">pgLandlords</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="title_activity_add_landlord">Leanback AddLandlord</string>

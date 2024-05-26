@@ -27,16 +27,16 @@
         android:layout_height="50dp"
         android:background="@drawable/edit_text_border"
         android:ems="10"
-        android:maxLength="50"
         android:hint="Username"
         android:inputType="textPersonName"
+        android:maxLength="50"
         android:paddingStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.600" />
+        app:layout_constraintVertical_bias="0.481" />
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -45,21 +45,21 @@
         android:background="@drawable/edit_text_border"
         android:ems="10"
         android:hint="Password"
-        android:maxLength="50"
         android:inputType="textPassword"
+        android:maxLength="50"
         android:paddingStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.750" />
+        app:layout_constraintVertical_bias="0.591" />
 
     <Button
         android:id="@+id/signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/custom_blue"
+        android:backgroundTint="#F16820"
         android:text="Add Landlord"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,7 +100,7 @@
         app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintVertical_bias="0.267" />
 
     <EditText
         android:id="@+id/phoneNumber"
@@ -117,7 +117,7 @@
         app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.300" />
+        app:layout_constraintVertical_bias="0.371" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

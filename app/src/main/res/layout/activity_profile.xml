@@ -18,7 +18,7 @@
         android:layout_height="155dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="116dp"
-        android:background="@color/custom_blue"
+        android:background="#929292"
         android:contentDescription="Profile Update"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +42,7 @@
         android:layout_height="155dp"
         android:layout_marginTop="116dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/custom_blue"
+        android:background="#F16820"
         android:contentDescription="My Propertys"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

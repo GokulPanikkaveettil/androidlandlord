@@ -1,4 +1,4 @@
-package com.example.voyagerdiaries
+package com.example.pgLandlords
 
 import Database
 import android.content.Context
@@ -20,15 +20,15 @@ class ProfileUpdate : AppCompatActivity() {
         val updateFirstName = findViewById<EditText>(R.id.editTextUpdateFirstName);
         val updateLastName = findViewById<EditText>(R.id.editTextUpdateLastName);
 
-        val voyagerdiariesPref =
-            this.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
-        val userId = voyagerdiariesPref.getString("id", null);
+        val pgLandlordsPref =
+            this.getSharedPreferences("pgLandlordsPref", Context.MODE_PRIVATE)
+        val userId = pgLandlordsPref.getString("id", null);
         if (userId == null) {
             val intentMainActivity = Intent(this, MainActivity::class.java)
             startActivity(intentMainActivity)
         }
-        val firstName = voyagerdiariesPref.getString("firstName", null);
-        val lastName = voyagerdiariesPref.getString("lastName", null);
+        val firstName = pgLandlordsPref.getString("firstName", null);
+        val lastName = pgLandlordsPref.getString("lastName", null);
         updateFirstName.setText(firstName);
         updateLastName.setText(lastName);
         val updateButton = findViewById<Button>(R.id.updateProfileButton);

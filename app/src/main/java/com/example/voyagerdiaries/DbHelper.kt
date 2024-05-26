@@ -156,7 +156,7 @@ class Database(context: Context) {
     }
 
 
-    fun postUserReviews(reviews: String): Boolean {
+    fun postProperty(name: String, description: String, price: Int): Boolean {
         /*
         we insert the review when a user post from review add screen
         we take the user ID from sharedpreference and insert the review text passed as parameter
@@ -166,7 +166,7 @@ class Database(context: Context) {
             context.getSharedPreferences("voyagerdiariesPref", Context.MODE_PRIVATE)
         val userId = voyagerdiariesPref.getString("id", null);
         val query =
-            "insert into reviews (review, user_id) values ('$reviews','$userId') returning id";
+            "insert into properties (name, user_id, description, price) values ('$name','$userId', '$description', '$price') returning id";
         try {
             val statement = connection?.createStatement();
             val resultSet = statement?.executeQuery(query);

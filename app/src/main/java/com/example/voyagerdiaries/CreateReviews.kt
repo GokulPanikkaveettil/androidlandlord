@@ -27,26 +27,28 @@ class CreateReviews : AppCompatActivity() {
         toggle.syncState();
         getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true);
 
-        val reviewText = findViewById<EditText>(R.id.editTextPostReviews);
-        val postReviewButton = findViewById<Button>(R.id.postReview);
+        val name = findViewById<EditText>(R.id.name);
+        val description = findViewById<EditText>(R.id.description);
+        val price = findViewById<EditText>(R.id.price);
+        val addPropertyButton = findViewById<Button>(R.id.addProperty);
         /*
         when postreview button is clicked we check the review text if empty
         and then feed to database class function addReview via coroutine.
          */
-        postReviewButton.setOnClickListener {
-            if (reviewText.text.isBlank() == true) {
+        addPropertyButton.setOnClickListener {
+            if (name.text.isBlank() == true) {
                 Toast.makeText(
                     this,
-                    "We appreciate your feedback, but we cannot accept empty reviews.",
+                    "We cannot accept empty name.",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
                 coroutineScope.launch {
-                    val reviewAdded = addReview(reviewText.text.toString())
+                    val reviewAdded = addProperty(name.text.toString(), description.text.toString(), price.text.toString())
                     if(reviewAdded) {
                         val intent = Intent(this@CreateReviews, Reviews::class.java)
                         startActivity(intent)
-                        reviewText.setText("")
+                        name.setText("")
                     }
                     else
                     {
@@ -101,12 +103,12 @@ class CreateReviews : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    private suspend fun addReview(review: String): Boolean = withContext(
+    private suspend fun addProperty(name: String, description: String, price: String): Boolean = withContext(
         Dispatchers.IO
     ) {
         return@withContext try {
             val db = Database(this@CreateReviews)
-            db.postUserReviews(review)
+            db.postProperty(name, description, price.toInt())
         } catch (e: Exception) {
             e.printStackTrace()
             false

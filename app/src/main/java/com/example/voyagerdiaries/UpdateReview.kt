@@ -21,7 +21,7 @@ class UpdateReview : AppCompatActivity() {
         val editReview = findViewById<EditText>(R.id.editTextPostReviews)
         editReview.setText(review)
 
-        val postReviewButton = findViewById<Button>(R.id.postReview);
+        val postReviewButton = findViewById<Button>(R.id.addProperty);
         postReviewButton.setOnClickListener {
             if (editReview.text.isBlank() == true) {
                 Toast.makeText(

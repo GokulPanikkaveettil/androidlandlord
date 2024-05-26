@@ -81,8 +81,8 @@ class Reviews : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
-                R.id.myprofile-> {
-                    val mainIntent = Intent(this@Reviews, Profile::class.java)
+                R.id.myproperties-> {
+                    val mainIntent = Intent(this@Reviews, MyReviews::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_landlord-> {

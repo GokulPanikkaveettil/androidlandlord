@@ -68,12 +68,16 @@ class CreateReviews : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
-                R.id.myprofile-> {
-                    val mainIntent = Intent(this@CreateReviews, Profile::class.java)
+                R.id.myproperties-> {
+                    val mainIntent = Intent(this@CreateReviews, MyReviews::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {
                     val mainIntent = Intent(this@CreateReviews, Reviews::class.java)
+                    startActivity(mainIntent)
+                }
+                R.id.add_landlord-> {
+                    val mainIntent = Intent(this@CreateReviews, AddLandlord::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.add_review_sidemenu-> {

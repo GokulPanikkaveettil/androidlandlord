@@ -29,7 +29,7 @@
             android:exported="false" />
         <activity
             android:name=".MyReviews"
-            android:label="My Reviews"
+            android:label="My Properties"
             android:exported="false" />
         <activity
             android:name=".ProfileUpdate"
@@ -58,13 +58,13 @@
             android:label="Sign Up" />
         <activity
             android:name=".Reviews"
-            android:label="Reviews" />
+            android:label="All Properties" />
         <activity
             android:name=".CreateReviews"
-            android:label="Post Reviews" />
+            android:label="Add Property" />
         <activity
             android:name=".UpdateReview"
-            android:label="Edit Review" />
+            android:label="Edit Property" />
     </application>
 
 </manifest>

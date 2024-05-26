@@ -37,8 +37,8 @@ class Profile : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
-                R.id.myprofile-> {
-                    val mainIntent = Intent(this@Profile, Profile::class.java)
+                R.id.myproperties-> {
+                    val mainIntent = Intent(this@Profile, MyReviews::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {

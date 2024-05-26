@@ -29,6 +29,8 @@ class AddLandlord : AppCompatActivity() {
         toggle = ActionBarDrawerToggle(this@AddLandlord, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+        getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true);
+        val navView = findViewById<NavigationView>(R.id.navView);
 
 
         val button = findViewById<Button>(R.id.signup);
@@ -59,12 +61,11 @@ class AddLandlord : AppCompatActivity() {
                     }
                 }
         }
-        val navView = findViewById<NavigationView>(R.id.navView);
 
         navView.setNavigationItemSelectedListener {
             when (it.itemId){
-                R.id.myprofile-> {
-                    val mainIntent = Intent(this@AddLandlord, Profile::class.java)
+                R.id.myproperties-> {
+                    val mainIntent = Intent(this@AddLandlord, MyReviews::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.home-> {
@@ -73,6 +74,10 @@ class AddLandlord : AppCompatActivity() {
                 }
                 R.id.add_review_sidemenu-> {
                     val mainIntent = Intent(this@AddLandlord, CreateReviews::class.java)
+                    startActivity(mainIntent)
+                }
+                R.id.add_landlord-> {
+                    val mainIntent = Intent(this@AddLandlord, AddLandlord::class.java)
                     startActivity(mainIntent)
                 }
                 R.id.logout_sidemenu-> {

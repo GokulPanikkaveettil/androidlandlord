@@ -265,19 +265,19 @@ class Database(context: Context) {
         when a user clicks a delete property button we simple execute the
         delete query and property is deleted based on property_id passed as parameter.
          */
-        var deletedReview = false;
+        var deletedProperty = false;
         val statement = connection?.createStatement();
         try {
             val query = "delete from properties where id=$propertyId returning id"
             val resultSet = statement?.executeQuery(query);
-            deletedReview = true;
+            deletedProperty = true;
 
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
             connection?.close()
         }
-        return deletedReview
+        return deletedProperty
     }
 
 

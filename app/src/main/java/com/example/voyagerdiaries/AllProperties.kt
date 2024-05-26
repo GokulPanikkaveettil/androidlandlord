@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 
 
     data class Property(val id: Int, val name: String, val user_id: Int, val description: String, val price: Int);
-class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener) :
+class PropertyViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener) :
     RecyclerView.ViewHolder(itemView) {
     val name: TextView = itemView.findViewById(R.id.name);
     val description: TextView = itemView.findViewById(R.id.description);
@@ -36,14 +36,14 @@ class ReviewViewHolder(itemView: View, listener: ItemAdapter.onItemClickListener
     }
 }
 
-class ItemAdapter(private val properties: List<Property>, val isAdmin: String) : RecyclerView.Adapter<ReviewViewHolder>() {
+class ItemAdapter(private val properties: List<Property>, val isAdmin: String) : RecyclerView.Adapter<PropertyViewHolder>() {
     private lateinit var holderListener: onItemClickListener
 
     // Create the item's view holder.
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PropertyViewHolder {
         // Inflate the layout for the item view
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.property_list_layout, parent, false)
-        return ReviewViewHolder(itemView, holderListener)
+        return PropertyViewHolder(itemView, holderListener)
     }
 
     // Interface for item click listener
@@ -57,7 +57,7 @@ class ItemAdapter(private val properties: List<Property>, val isAdmin: String) :
     }
 
     // Bind data to the view holder
-    override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PropertyViewHolder, position: Int) {
         val property = properties[position]
 
         // Set the property text and user name
@@ -142,7 +142,7 @@ class Properties : AppCompatActivity() {
 
         coroutineScope.launch {
             // Retrieve the property list from the Database class
-            propertyList = getReview(userId!!)
+            propertyList = getProperty(userId!!)
 
             // Set up the RecyclerView
             val recyclerView = findViewById<RecyclerView>(R.id.allProperties)
@@ -156,11 +156,11 @@ class Properties : AppCompatActivity() {
                     println(action)
                     val buttonHolder = recyclerView.findViewHolderForAdapterPosition(position)
                     if (action == "connect") {
-                        // Start the ReviewReply activity to reply to a property
+                        // Start the PropertyReply activity to reply to a property
                         println(propertyId)
-                        val replyReviewIntent = Intent(this@Properties, GetLandLordDetails::class.java)
-                        replyReviewIntent.putExtra("propertyId", propertyId.toString())
-                        startActivity(replyReviewIntent)
+                        val replyPropertyIntent = Intent(this@Properties, GetLandLordDetails::class.java)
+                        replyPropertyIntent.putExtra("propertyId", propertyId.toString())
+                        startActivity(replyPropertyIntent)
                     }
                 }
 
@@ -177,7 +177,7 @@ class Properties : AppCompatActivity() {
     }
 
     // Function to retrieve properties from the Database helper class
-    private suspend fun getReview(userId: String, usersReview: Boolean = false): MutableList<Property> = withContext(Dispatchers.IO) {
+    private suspend fun getProperty(userId: String, usersProperty: Boolean = false): MutableList<Property> = withContext(Dispatchers.IO) {
         return@withContext try {
             val db = Database(this@Properties)
             db.getAllProperty(userId)

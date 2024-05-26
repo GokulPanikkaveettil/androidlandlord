@@ -6,7 +6,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/reviewText"
+        android:id="@+id/propertyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp" />

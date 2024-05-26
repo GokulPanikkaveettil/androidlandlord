@@ -26,8 +26,8 @@ class Profile : AppCompatActivity() {
         profileUpdateView.setOnClickListener {
             startActivity(Intent(this, ProfileUpdate::class.java))
         }
-        val myReviewsList = findViewById<ImageButton>(R.id.myReviewsList)
-        myReviewsList.setOnClickListener {
+        val myPropertysList = findViewById<ImageButton>(R.id.myPropertysList)
+        myPropertysList.setOnClickListener {
             startActivity(Intent(this, MyProperties::class.java))
         }
 

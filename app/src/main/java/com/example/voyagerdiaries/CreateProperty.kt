@@ -32,8 +32,8 @@ class CreateProperties : AppCompatActivity() {
         val price = findViewById<EditText>(R.id.price);
         val addPropertyButton = findViewById<Button>(R.id.addProperty);
         /*
-        when postreview button is clicked we check the review text if empty
-        and then feed to database class function addReview via coroutine.
+        when postproperty button is clicked we check the property text if empty
+        and then feed to database class function addProperty via coroutine.
          */
         addPropertyButton.setOnClickListener {
             if (name.text.isBlank() == true) {
@@ -44,8 +44,8 @@ class CreateProperties : AppCompatActivity() {
                 ).show()
             } else {
                 coroutineScope.launch {
-                    val reviewAdded = addProperty(name.text.toString(), description.text.toString(), price.text.toString())
-                    if(reviewAdded) {
+                    val propertyAdded = addProperty(name.text.toString(), description.text.toString(), price.text.toString())
+                    if(propertyAdded) {
                         val intent = Intent(this@CreateProperties, Properties::class.java)
                         startActivity(intent)
                         name.setText("")
@@ -54,7 +54,7 @@ class CreateProperties : AppCompatActivity() {
                     {
                         Toast.makeText(
                             this@CreateProperties,
-                            "Review Add failed. Please modify your input.",
+                            "Property Add failed. Please modify your input.",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

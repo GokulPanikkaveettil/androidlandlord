@@ -11,7 +11,7 @@
         android:title="Profile" />
 
     <item
-        android:id="@+id/add_review"
+        android:id="@+id/add_property"
         android:icon="@drawable/baseline_post_add_24"
         android:title="Post" />
 

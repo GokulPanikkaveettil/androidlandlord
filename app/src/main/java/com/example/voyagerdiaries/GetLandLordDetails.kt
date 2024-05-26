@@ -10,7 +10,7 @@ class GetLandLordDetails : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_review_reply)
+        setContentView(R.layout.activity_property_reply)
         val propertyId = intent.getStringExtra("propertyId")
         println("KK")
         println(propertyId)
@@ -24,14 +24,14 @@ class GetLandLordDetails : AppCompatActivity() {
         super.onDestroy()
         coroutineScope.cancel()
     }
-    private suspend fun getLandLordDetails(reviewId: Int): String = withContext(
+    private suspend fun getLandLordDetails(propertyId: Int): String = withContext(
         Dispatchers.IO
     ) {
         return@withContext try {
             val db = Database(this@GetLandLordDetails)
             print("LLL")
-            print(reviewId)
-            db.getLandLordDetails(reviewId)
+            print(propertyId)
+            db.getLandLordDetails(propertyId)
         } catch (e: Exception) {
             e.printStackTrace()
             ""
